@@ -1,0 +1,4822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- ================================================================
+       META — change title and description to suit
+       ================================================================ -->
+  <title>Bincy Manuel · Data Analyst</title>
+  <meta name="description" content="Bincy Manuel — Data Analyst at Institute of Small Enterprises and Development. I turn raw data into clear insights." />
+
+  <!-- Google Fonts:
+       - Anton (condensed uppercase) → name + designation
+       - Instrument Serif (italic) → "Hey, there"
+       - Inter (300, 400, 500, 600, 700) → labels, body, pills, chips
+       - Fraunces (variable: opsz, wght 300..600) → Headings & titles
+  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <!-- HERO fonts load first (Anton, Instrument Serif, Inter) so the first screen appears fast -->
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Instrument+Serif:ital@1&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Fraunces is only needed below the hero, so it loads in the background (the unused SOFT axis was removed to shrink the download) -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&display=swap" media="print" onload="this.media='all'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&display=swap" /></noscript>
+  <!-- CHANGE: update this preload path if the profile image filename/path changes -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" />
+  <link rel="preload" as="image" href="images/profile.png" fetchpriority="high" />
+
+  <style>
+    /* ================================================================
+       DESIGN TOKENS — change accent colour, background stops here
+       ================================================================ */
+    :root {
+      --bg-from:        #FFFaf3;        /* top-left cream              */
+      --bg-to:          #FFD9B0;        /* bottom-right warm peach     */
+      --accent:         #F97316;        /* orange                      */
+      --text:           #111111;        /* near-black                  */
+      --text-muted:     #666666;
+      --font-serif:     'Instrument Serif', Georgia, serif;
+      --font-display:   'Anton', Impact, sans-serif;
+      --font-body:      'Inter', sans-serif;
+      --font-fraunces:  'Fraunces', Georgia, serif;
+      --ease:           cubic-bezier(0.22, 1, 0.36, 1);
+      --pad-x:          clamp(20px, 5vw, 70px);
+      --pad-y:          clamp(20px, 4vh, 52px);
+      --nav-h:          56px;           /* height of the fixed top navigation */
+    }
+
+    /* ================================================================
+       RESET & STICKY-SAFE ROOT
+       Note: Do NOT set overflow: hidden, overflow: auto or overflow-x: hidden
+       on html or body, as that breaks position: sticky on children.
+       We use overflow-x: clip on body to prevent horizontal spill safely.
+       ================================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      min-height: 100%;
+      scroll-behavior: smooth;
+      scrollbar-width: none;              /* Firefox: hide the scrollbar (page still scrolls) */
+      -ms-overflow-style: none;
+    }
+    html::-webkit-scrollbar, body::-webkit-scrollbar { width: 0; height: 0; display: none; }
+
+    body {
+      min-height: 100%;
+      overflow-x: clip;
+      background: var(--bg-from);
+      color: var(--text);
+      font-family: var(--font-body);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ONE continuous background for the whole site.
+       It is fixed to the screen, so no section has its own backdrop and there are no
+       visible seams between pages. The soft orange blob drifts as you scroll (--sp = 0..1). */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: -2; pointer-events: none;
+      background:
+        radial-gradient(70vmax 60vmax at 90% 100%, rgba(255, 204, 158, 0.65), transparent 65%),
+        radial-gradient(60vmax 50vmax at 0% 0%, rgba(255, 255, 255, 0.95), transparent 60%),
+        linear-gradient(135deg, var(--bg-from) 0%, #FFEBD3 55%, var(--bg-to) 100%);
+    }
+    body::after {
+      content: '';
+      position: fixed; z-index: -1; pointer-events: none;
+      width: 62vmax; height: 62vmax; border-radius: 50%;
+      left: calc(-10vmax + var(--sp, 0) * 70vw);
+      top: calc(5vh + var(--sp, 0) * 45vh);
+      background: radial-gradient(circle, rgba(249, 115, 22, 0.17) 0%, rgba(249, 115, 22, 0.05) 45%, transparent 70%);
+      filter: blur(40px);
+    }
+    [data-href] { cursor: pointer; }     /* links without a visible URL preview (see LINK SCRIPT) */
+
+    a { text-decoration: none; color: inherit; }
+
+    /* ================================================================
+       TOP NAVIGATION (fixed) — About Me · Experience · Projects · Contact Me
+       CHANGE: link labels live in the <nav class="site-nav"> markup below
+       ================================================================ */
+    .site-nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--nav-h);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;          /* links sit on the right (no logo) */
+      padding: 0 var(--pad-x);
+      background: rgba(255, 250, 243, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(26, 26, 26, 0.06);
+      animation: navIn 0.5s var(--ease) 0.9s both;   /* fades in as the hero animation ends */
+    }
+    @keyframes navIn {
+      from { opacity: 0; transform: translateY(-14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .site-nav__logo {
+      font-family: var(--font-fraunces);
+      font-size: 1.45rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .site-nav__links {
+      display: flex;
+      align-items: center;
+      gap: clamp(18px, 3vw, 40px);
+      list-style: none;
+    }
+    .site-nav__link {
+      position: relative;
+      display: inline-block;
+      padding: 8px 0;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: #1a1a1a;
+      transition: color 0.25s ease;
+    }
+    .site-nav__link::after {
+      content: '';
+      position: absolute;
+      left: 0; bottom: 2px;
+      width: 100%; height: 2px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 0.35s var(--ease);
+    }
+    .site-nav__link:hover,
+    .site-nav__link.is-active { color: var(--accent); }
+    .site-nav__link:hover::after,
+    .site-nav__link.is-active::after { transform: scaleX(1); }
+    .site-nav__link:focus-visible,
+    .site-nav__logo:focus-visible,
+    .site-nav__toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 4px; }
+
+    .site-nav__toggle {
+      display: none;
+      width: 44px; height: 44px;
+      margin-right: -10px;
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .site-nav__toggle span {
+      display: block;
+      width: 22px; height: 2px;
+      background: #1a1a1a;
+      border-radius: 2px;
+      transition: transform 0.3s var(--ease), opacity 0.2s ease;
+    }
+    .site-nav.is-open .site-nav__toggle span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .site-nav.is-open .site-nav__toggle span:nth-child(2) { opacity: 0; }
+    .site-nav.is-open .site-nav__toggle span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    @media (max-width: 767px) {
+      .site-nav__toggle { display: flex; }
+      .site-nav__links {
+        position: absolute;
+        top: 100%; left: 0; right: 0;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        background: rgba(255, 250, 243, 0.97);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(26, 26, 26, 0.08);
+        box-shadow: 0 16px 30px rgba(0, 0, 0, 0.08);
+        max-height: 0;
+        overflow: hidden;
+        visibility: hidden;
+        transition: max-height 0.4s var(--ease), visibility 0s linear 0.4s;
+      }
+      .site-nav.is-open .site-nav__links {
+        max-height: 340px;
+        visibility: visible;
+        transition: max-height 0.4s var(--ease), visibility 0s;
+      }
+      .site-nav__link {
+        display: flex;
+        align-items: center;
+        min-height: 52px;
+        padding: 0 var(--pad-x);
+        font-size: 0.95rem;
+      }
+      .site-nav__link::after { left: var(--pad-x); width: calc(100% - 2 * var(--pad-x)); bottom: 8px; }
+    }
+
+    /* ================================================================
+       STAGE — full-viewport canvas for hero section
+       ================================================================ */
+    .stage {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ================================================================
+       AMBIENT GLOW — large blurred orange orb behind the hero photo
+       ================================================================ */
+    .glow {
+      position: absolute;
+      width: 640px;
+      height: 640px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(249,115,22,0.38) 0%, rgba(249,115,22,0.08) 50%, transparent 72%);
+      filter: blur(55px);
+      bottom: -80px;
+      left: 50%;
+      transform: translateX(-50%);
+      pointer-events: none;
+      z-index: 0;
+      -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 45%, transparent calc(100% - 90px));
+      mask-image: linear-gradient(to bottom, #000 0, #000 45%, transparent calc(100% - 90px));
+    }
+
+    /* ================================================================
+       1. HEY THERE — z-index 1, sits BEHIND the photo
+       ================================================================ */
+    .hey-text {
+      position: absolute;
+      top: 7vh;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-family: var(--font-serif);
+      font-style: italic;
+      /* ================================================================
+         CHANGE: font-size below to adjust how large "Hey, there" appears
+         ================================================================ */
+      font-size: clamp(4.5rem, 12vw, 14rem);
+      line-height: 1;
+      color: var(--text);
+      letter-spacing: -0.015em;
+      white-space: nowrap;
+      z-index: 1;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    /* Accent comma in greeting */
+    .hey-accent { color: var(--accent); }
+
+    /* ================================================================
+       2. PHOTO — z-index 2, bottom-centred, 92vh tall
+          Bottom fades into the background via mask-image
+       ================================================================ */
+    .photo-wrap {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      height: 92vh;           /* CHANGE: increase/decrease to resize hero photo */
+      pointer-events: none;
+      -webkit-mask-image: linear-gradient(to bottom, black 72%, transparent 100%);
+      mask-image:         linear-gradient(to bottom, black 72%, transparent 100%);
+    }
+
+    /* ================================================================
+       CHANGE: replace "images/profile.png" with your image path.
+       The image should be a transparent-background portrait PNG.
+       ================================================================ */
+    .photo-wrap img {
+      height: 100%;
+      width: auto;
+      display: block;
+      object-fit: contain;
+      object-position: bottom center;
+    }
+
+    /* ================================================================
+       3. NAME BLOCK — z-index 3, bottom-left
+       CHANGE: text inside .name-iam, .name-first, .name-last
+       ================================================================ */
+    .name-block {
+      position: absolute;
+      bottom: var(--pad-y);
+      left: var(--pad-x);
+      z-index: 3;
+    }
+
+    .name-iam {
+      font-family: var(--font-display);
+      /* ================================================================
+         CHANGE: adjust font-size for "I AM" line
+         ================================================================ */
+      font-size: clamp(1.6rem, 3.4vw, 4.2rem);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text);
+      display: block;
+      line-height: 1.1;
+    }
+
+    .name-first,
+    .name-last {
+      font-family: var(--font-display);
+      /* ================================================================
+         CHANGE: adjust font-size for main name lines
+         ================================================================ */
+      font-size: clamp(3.5rem, 9vw, 12rem);
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
+      color: var(--text);
+      display: block;
+      line-height: 0.88;
+    }
+
+    /* ================================================================
+       4. DESIGNATION BLOCK — z-index 3, bottom-right, right-aligned
+       CHANGE: text inside .desig-title and .desig-org
+       ================================================================ */
+    .desig-block {
+      position: absolute;
+      bottom: var(--pad-y);
+      right: var(--pad-x);
+      z-index: 3;
+      text-align: right;
+    }
+
+    .desig-title {
+      font-family: var(--font-display);
+      /* ================================================================
+         CHANGE: adjust font-size for designation
+         ================================================================ */
+      font-size: clamp(1.8rem, 3.8vw, 5.2rem);
+      text-transform: uppercase;
+      color: var(--text);
+      line-height: 0.9;
+      letter-spacing: 0.01em;
+    }
+
+    .desig-org {
+      font-family: var(--font-body);
+      font-size: clamp(0.58rem, 0.85vw, 0.78rem);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--text-muted);
+      margin-top: 10px;
+      line-height: 1.5;
+    }
+
+    /* Description quote — sits below org, right-aligned */
+    .desig-desc {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: clamp(0.7rem, 0.95vw, 0.88rem);
+      font-weight: 400;
+      line-height: 1.6;
+      color: var(--text-muted);
+      margin-top: 12px;
+      max-width: 240px;
+      text-align: right;
+      margin-left: auto;
+    }
+
+    /* ================================================================
+       5. LEFT PANEL — availability badge only
+          True vertical centre on the left, clear of the name block
+       CHANGE: badge text
+       ================================================================ */
+    .left-panel {
+      position: absolute;
+      left: var(--pad-x);
+      top: 44%;
+      transform: translateY(-50%);
+      z-index: 3;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(255, 255, 255, 0.70);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(249, 115, 22, 0.28);
+      border-radius: 50px;
+      padding: 5px 13px;
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .badge__dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+      animation: dot-pulse 2.2s ease-in-out infinite;
+    }
+
+    @keyframes dot-pulse {
+      0%,100% { box-shadow: 0 0 0 0   rgba(249,115,22,0.40); }
+      50%      { box-shadow: 0 0 0 5px rgba(249,115,22,0.00); }
+    }
+
+    /* ================================================================
+       6. PILLS BAR — right side, vertically centred in TOP 55% of screen
+          (top: 22vh to 58vh) so it never overlaps the "DATA ANALYST" block.
+       CHANGE: href values on each <a class="pill">
+       ================================================================ */
+    .pills-bar {
+      position: absolute;
+      right: var(--pad-x);
+      top: 40%;           /* anchors midpoint of bar at ~40% which maps to 22–58vh range */
+      transform: translateY(-50%);
+      max-top: 58vh;      /* guard against tall bars on very large screens */
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* thin decorative line above + below */
+    .pills-bar::before,
+    .pills-bar::after {
+      content: '';
+      width: 1px;
+      height: 36px;
+      background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.15));
+      align-self: center;
+    }
+    .pills-bar::after {
+      background: linear-gradient(to top, transparent, rgba(0,0,0,0.15));
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 16px 7px 12px;
+      border-radius: 50px;
+      background: rgba(255, 255, 255, 0.62);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(0, 0, 0, 0.09);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text);
+      cursor: pointer;
+      height: 44px;        /* explicit 44px height to prevent overlap */
+      box-sizing: border-box;
+      transition:
+        transform    0.28s var(--ease),
+        border-color 0.22s ease,
+        box-shadow   0.28s ease;
+      white-space: nowrap;
+    }
+
+    .pill svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      stroke: var(--text-muted);
+      fill: none;
+      stroke-width: 1.7;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: stroke 0.22s ease;
+    }
+
+    .pill__label {
+      transition: color 0.22s ease;
+    }
+
+    .pill:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent);
+      box-shadow: 0 8px 24px rgba(249, 115, 22, 0.18);
+    }
+
+    .pill:hover svg        { stroke: var(--accent); }
+    .pill:hover .pill__label { color: var(--accent); }
+
+    /* Short-screen guard: scale pills down below 700px viewport height
+       so they never push into the "DATA ANALYST" block */
+    @media (max-height: 700px) {
+      .pills-bar {
+        top: 36%;
+        gap: 4px;
+      }
+      .pill {
+        height: 36px;
+        padding: 5px 12px 5px 10px;
+        font-size: 0.72rem;
+      }
+      .pills-bar::before,
+      .pills-bar::after { height: 22px; }
+    }
+    @media (max-height: 560px) {
+      /* Icon-only circles on very short screens */
+      .pills-bar { top: 30%; gap: 4px; }
+      .pill {
+        width: 36px;
+        height: 36px;
+        padding: 0;
+        border-radius: 50%;
+        justify-content: center;
+      }
+      .pill__label { display: none; }
+    }
+
+    /* ================================================================
+       HERO ANIMATION KEYFRAMES
+       ================================================================ */
+    @keyframes heyIn {
+      from { opacity: 0; filter: blur(14px); transform: scale(1.03); }
+      to   { opacity: 1; filter: blur(0);    transform: scale(1);    }
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(55px); }
+      to   { opacity: 1; transform: translateY(0);    }
+    }
+
+    @keyframes fromRight {
+      from { opacity: 0; transform: translateX(44px); }
+      to   { opacity: 1; transform: translateX(0);    }
+    }
+
+    @keyframes fromLeft {
+      from { opacity: 0; transform: translateX(-44px); }
+      to   { opacity: 1; transform: translateX(0);     }
+    }
+
+    @keyframes photoRise {
+      from {
+        opacity:   0;
+        transform: translateX(-50%) translateY(60px) scale(0.95);
+      }
+      to {
+        opacity:   1;
+        transform: translateX(-50%) translateY(0)    scale(1);
+      }
+    }
+
+    /* ================================================================
+       HERO TIMING CHAIN
+       ================================================================ */
+    /* ================================================================
+       HERO TIMING CHAIN — 3× faster, total ~1.6s
+       "Hey, there" 0.5s at 0.05s; Name 0.5s at 0.2s; Desig/Org/Badge 0.5s at 0.4s;
+       Pills 0.4s each 0.06s apart from 0.6s; Photo 0.7s at 0.8s
+       ================================================================ */
+    .anim-hey    { opacity: 0; animation: heyIn     0.5s var(--ease) 0.05s both; }
+    .anim-iam    { opacity: 0; animation: slideUp   0.5s var(--ease) 0.20s both; }
+    .anim-first  { opacity: 0; animation: slideUp   0.5s var(--ease) 0.28s both; }
+    .anim-last   { opacity: 0; animation: slideUp   0.5s var(--ease) 0.36s both; }
+    .anim-desig  { opacity: 0; animation: fromRight 0.5s var(--ease) 0.40s both; }
+    .anim-org    { opacity: 0; animation: fromRight 0.5s var(--ease) 0.48s both; }
+    .anim-desc   { opacity: 0; animation: fromRight 0.5s var(--ease) 0.56s both; }
+    .anim-badge  { opacity: 0; animation: fromLeft  0.5s var(--ease) 0.40s both; }
+    .anim-pill-1 { opacity: 0; animation: fromRight 0.4s var(--ease) 0.60s both; }
+    .anim-pill-2 { opacity: 0; animation: fromRight 0.4s var(--ease) 0.66s both; }
+    .anim-pill-3 { opacity: 0; animation: fromRight 0.4s var(--ease) 0.72s both; }
+    .anim-pill-4 { opacity: 0; animation: fromRight 0.4s var(--ease) 0.78s both; }
+    .anim-photo  { opacity: 0; animation: photoRise 0.7s var(--ease) 0.80s both; }
+
+    /* ================================================================
+       SECTION 2: ABOUT ME — the classic portfolio layout
+       Photo on the left · intro, key facts, skills and buttons on the right.
+       CHANGE: all text lives in the <section id="about"> markup; photo = images/profile.png
+       ================================================================ */
+    .about5 {
+      position: relative; min-height: 100vh;
+      display: flex; align-items: center;
+      padding: calc(var(--nav-h) + clamp(30px, 6vh, 70px)) var(--pad-x) clamp(50px, 9vh, 100px);
+    }
+    .about5__inner {
+      width: 100%; max-width: 1180px; margin: 0 auto;
+      display: grid; grid-template-columns: minmax(260px, 0.8fr) 1.3fr;
+      align-items: center; gap: clamp(32px, 6vw, 90px);
+    }
+    .about5 .rv { opacity: 0; transform: translateY(28px); transition: opacity 0.8s var(--ease), transform 0.8s var(--ease); transition-delay: var(--d, 0s); }
+    .about5.is-in .rv { opacity: 1; transform: none; }
+
+    /* Cursive heading: writes itself in, then shines wherever the cursor moves over it */
+    .a5-script-wrap { display: flex; justify-content: center; }
+    .a5-script {
+      --mx: -300px; --my: -300px;
+      font-family: 'Dancing Script', 'Segoe Script', 'Brush Script MT', cursive;
+      font-weight: 700;
+      font-size: clamp(4.6rem, 11vw, 9.5rem);
+      line-height: 0.95; letter-spacing: 0.01em;
+      padding: 0.1em 0.25em 0.2em 0.05em;
+      color: transparent; cursor: default;
+      background:
+        radial-gradient(circle 150px at var(--mx) var(--my), #fff 0%, rgba(255, 244, 214, 0.9) 25%, rgba(255, 255, 255, 0) 70%),
+        linear-gradient(110deg, transparent 42%, rgba(255, 255, 255, 0.95) 50%, transparent 58%) -150% 0 / 250% 100% no-repeat,
+        linear-gradient(135deg, #F97316 0%, #FB923C 50%, #EA580C 100%);
+      -webkit-background-clip: text; background-clip: text;
+      filter: drop-shadow(0 6px 18px rgba(249, 115, 22, 0.25));
+      transition: filter 0.4s ease;
+      clip-path: inset(0 100% 0 0);                      /* hidden until it "writes in" */
+    }
+    .about5.is-in .a5-script { animation: a5Write 1.9s cubic-bezier(0.65, 0, 0.35, 1) 0.15s forwards; }
+    @keyframes a5Write { to { clip-path: inset(-20% -20% -20% -20%); } }
+    .a5-script:hover { filter: drop-shadow(0 0 22px rgba(249, 115, 22, 0.65)); animation: a5Sweep 1.1s ease forwards; }
+    @keyframes a5Sweep { from { background-position: 0 0, -150% 0, 0 0; } to { background-position: 0 0, 150% 0, 0 0; } }
+
+    /* Text */
+    .a5-eyebrow { display: block; margin-bottom: 12px; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); }
+    .a5-title { font-family: var(--font-fraunces); font-weight: 300; font-size: clamp(2.1rem, 4.2vw, 3.8rem); line-height: 1.05; letter-spacing: -0.02em; }
+    .a5-title em { color: var(--accent); font-style: italic; }
+    .a5-text { margin-top: 20px; max-width: 58ch; color: var(--text-muted); font-size: clamp(0.98rem, 1.15vw, 1.08rem); line-height: 1.75; }
+    .a5-text + .a5-text { margin-top: 12px; }
+    .a5-text b { color: var(--text); font-weight: 600; }
+
+    .a5-stats { display: grid; grid-template-columns: repeat(3, auto); justify-content: start; gap: clamp(20px, 4vw, 48px); margin-top: 28px; padding-top: 24px; border-top: 1px solid rgba(26, 26, 26, 0.1); }
+    .a5-stat__num { font-family: var(--font-fraunces); font-weight: 300; font-size: clamp(2rem, 3.4vw, 3rem); line-height: 1; color: var(--accent); }
+    .a5-stat__lbl { margin-top: 6px; font-size: 0.82rem; color: var(--text-muted); line-height: 1.35; }
+
+
+    .a5-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+    .a5-btn {
+      display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+      padding: 13px 26px; border-radius: 999px; font: 600 0.92rem var(--font-body);
+      border: 1.5px solid var(--accent); transition: transform 0.25s var(--ease), box-shadow 0.25s ease, background 0.25s ease;
+    }
+    .a5-btn--solid { background: var(--accent); color: #fff; box-shadow: 0 10px 24px rgba(249, 115, 22, 0.3); }
+    .a5-btn--ghost { background: transparent; color: var(--accent); }
+    .a5-btn:hover { transform: translateY(-2px); }
+    .a5-btn--ghost:hover { background: rgba(249, 115, 22, 0.08); }
+
+    @media (max-width: 820px) {
+      .about5__inner { grid-template-columns: 1fr; }
+      .a5-script { font-size: clamp(3.8rem, 18vw, 6rem); }
+      .a5-stats { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (prefers-reduced-motion: reduce) { .about5 .rv { opacity: 1; transform: none; transition: none; } .a5-script { clip-path: none; animation: none !important; } }
+
+    /* ================================================================
+       ================================================================
+       SECTION 3: EXPERIENCE STYLES (ROADMAP SCROLL ENGINE)
+       ================================================================
+       ================================================================ */
+
+    .exp-section {
+      position: relative;
+      /* ================================================================
+         CHANGE: height below sets total scroll track length (500vh)
+         ================================================================ */
+      height: 500vh;
+      background: transparent;
+    }
+
+    .exp-sticky {
+      position: sticky;
+      top: 0;
+      width: 100%;
+      height: 100vh;
+      height: 100svh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+    }
+
+    .exp-glow {
+      display: none;                    /* glow now lives in the fixed page background */
+      position: absolute;
+      width: 800px;
+      height: 800px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(249,115,22,0.28) 0%, rgba(249,115,22,0.04) 50%, transparent 72%);
+      filter: blur(85px);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Header at top-left */
+    .exp-header {
+      position: absolute;
+      top: calc(var(--nav-h) + clamp(8px, 2.2vh, 24px));   /* sits below the fixed nav */
+      left: 7vw;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .exp-label {
+      display: block;
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #F97316;
+      margin-bottom: 6px;
+    }
+
+    .exp-heading {
+      font-family: var(--font-fraunces);
+      font-weight: 300;
+      font-size: clamp(2rem, 4vw, 3.6rem);
+      line-height: 1;
+      margin: 0;
+      display: flex;
+      flex-direction: row;       /* "My Journey" on ONE line so it never collides with card 1 */
+      flex-wrap: wrap;
+      gap: 0.25em;
+      letter-spacing: -0.02em;
+    }
+
+    .exp-heading__my      { color: #1a1a1a; display: block; }
+    .exp-heading__journey { color: #F97316; font-style: italic; display: block; }
+
+    /* Scene Container (Road SVG + Cyclist + Experience Cards) */
+    .exp-scene {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      max-width: 1600px;
+      max-height: 850px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+    }
+
+    .exp-road-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .exp-road-desktop { display: block; }
+    .exp-road-mobile  { display: none; }
+
+    /* Road active glowing stroke */
+    .road-active-path {
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 0.08s linear;
+    }
+
+    /* Markers */
+    .exp-marker {
+      cursor: pointer;
+      transition: transform 0.3s var(--ease);
+    }
+
+    .exp-marker:hover {
+      transform: scale(1.15);
+    }
+
+    .exp-marker__base {
+      transition: fill 0.4s ease, stroke 0.4s ease;
+    }
+
+    .exp-marker__num {
+      transition: fill 0.4s ease;
+    }
+
+    .exp-marker__pulse {
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .exp-marker.is-reached .exp-marker__base {
+      fill: #F97316;
+    }
+
+    .exp-marker.is-reached .exp-marker__num {
+      fill: #ffffff;
+    }
+
+    .exp-marker.is-reached .exp-marker__pulse {
+      opacity: 1;
+      animation: markerPulse 1.8s ease-out infinite;
+    }
+
+    @keyframes markerPulse {
+      0%   { r: 22px; opacity: 0.8; }
+      100% { r: 38px; opacity: 0.0; }
+    }
+
+    /* Cyclist group */
+    /* No CSS transition here: the scroll loop already smooths the motion (lerp),
+       and a transition on the SVG transform attribute made the bike lag behind its wheels. */
+    #cyclistG, #cyclistMobileG {
+      will-change: transform;
+    }
+
+    /* Wheels are spun from JS with rotate(angle cx cy). transform-origin must stay 0 0,
+       otherwise the origin is applied twice and the wheel drifts off the bike. */
+    .exp-wheel {
+      transform-origin: 0 0;
+      transform-box: view-box;
+    }
+
+    /* ================================================================
+       EXPERIENCE CARDS (HTML, Percentage Positioned)
+       ================================================================ */
+    .exp-card {
+      position: absolute;
+      width: 340px;
+      max-width: calc(100vw - 36px);
+      padding: 22px 24px;
+      background: rgba(255, 255, 255, 0.86);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.95);
+      border-radius: 22px;
+      box-shadow: 0 10px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(249, 115, 22, 0.05);
+      opacity: 0;
+      transform: translateY(30px);
+      filter: blur(6px);
+      pointer-events: none;
+      visibility: hidden;
+      transition:
+        opacity 0.7s var(--ease),
+        transform 0.7s var(--ease),
+        filter 0.7s var(--ease),
+        border-color 0.4s ease,
+        box-shadow 0.4s ease;
+      z-index: 6;
+    }
+
+    /* When stop is reached: card appears & stays visible */
+    .exp-card.is-reached {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+      pointer-events: auto;
+      visibility: visible;
+    }
+
+    /* Card under current cyclist position: soft orange glow border */
+    .exp-card.is-active {
+      border-color: #F97316;
+      box-shadow: 0 14px 44px rgba(249, 115, 22, 0.24), 0 0 0 1px #F97316;
+    }
+
+    /* Card 1: Stop 1 at 18% (left: 23%, sits ABOVE road at Y ~455) */
+    .exp-card--1 {
+      left: 22.5%;
+      top: 19%;
+      transform: translateX(-50%) translateY(30px);
+    }
+    .exp-card--1.is-reached {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Card 2: Stop 2 at 52% (left: 52.5%, sits BELOW road at Y ~245) */
+    .exp-card--2 {
+      left: 52.5%;
+      top: 48%;
+      transform: translateX(-50%) translateY(30px);
+    }
+    .exp-card--2.is-reached {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Card 3: Stop 3 at 86% (left: 80%, sits ABOVE road at Y ~415) */
+    .exp-card--3 {
+      left: 80%;
+      top: 8%;
+      transform: translateX(-50%) translateY(30px);
+    }
+    .exp-card--3.is-reached {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Card contents */
+    .exp-card__tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-body);
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #F97316;
+      background: rgba(249, 115, 22, 0.12);
+      padding: 4px 10px;
+      border-radius: 50px;
+      margin-bottom: 10px;
+    }
+
+    .exp-card__green-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10B981;
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6);
+      animation: greenPulse 2s infinite;
+    }
+
+    @keyframes greenPulse {
+      0%   { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6); }
+      70%  { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    .exp-card__title {
+      font-family: var(--font-fraunces);
+      font-size: 1.4rem;
+      font-weight: 500;
+      color: #1a1a1a;
+      line-height: 1.2;
+      margin: 0 0 6px 0;
+    }
+
+    .exp-card__org {
+      font-family: var(--font-body);
+      font-weight: 700;
+      font-size: 0.82rem;
+      color: #1a1a1a;
+      margin-bottom: 3px;
+    }
+
+    .exp-card__date {
+      font-family: var(--font-body);
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .exp-card__desc {
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      line-height: 1.5;
+      color: #333333;
+      margin-bottom: 14px;
+    }
+
+    .exp-card__chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .exp-chip {
+      font-family: var(--font-body);
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: #555555;
+      background: rgba(0, 0, 0, 0.05);
+      padding: 3px 9px;
+      border-radius: 12px;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    /* Scroll Hint at bottom centre */
+    .exp-scroll-hint {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      font-family: var(--font-body);
+      font-size: 0.76rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      pointer-events: none;
+      z-index: 8;
+      transition: opacity 0.5s ease;
+    }
+
+    .exp-scroll-hint svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--accent);
+      stroke-width: 2.2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      animation: hintBounce 1.8s infinite;
+    }
+
+    .exp-scroll-hint.is-hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    @keyframes hintBounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(7px); }
+      60% { transform: translateY(4px); }
+    }
+
+    /* ================================================================
+       PREFERS-REDUCED-MOTION — show all 3 sections statically
+       ================================================================ */
+    @media (prefers-reduced-motion: reduce) {
+      .anim-hey, .anim-iam, .anim-first, .anim-last,
+      .anim-desig, .anim-org, .anim-badge, .anim-desc,
+      .anim-pill-1, .anim-pill-2, .anim-pill-3, .anim-pill-4,
+      .anim-photo, .badge__dot, .about-sentence, .about-sentence .word {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+        filter: none !important;
+        transition: none !important;
+        visibility: visible !important;
+      }
+      .photo-wrap { transform: translateX(-50%) !important; }
+      .about-stage.js-mode .about-sentences-wrapper {
+        height: auto !important;
+      }
+      .about-stage.js-mode .about-sentence {
+        position: relative !important;
+        top: auto !important;
+        transform: none !important;
+        margin-bottom: 1.5rem !important;
+      }
+      /* Experience Fallback: show cards statically */
+      .exp-card {
+        opacity: 1 !important;
+        transform: none !important;
+        filter: none !important;
+        visibility: visible !important;
+      }
+      .exp-scroll-hint { display: none !important; }
+      .site-nav { animation: none !important; }
+    }
+
+    /* ================================================================
+       TABLET — 768px to 1080px tweaks
+       ================================================================ */
+    @media (min-width: 768px) and (max-width: 1080px) {
+      .name-first, .name-last { font-size: clamp(3rem, 8.5vw, 8rem); }
+      .desig-title             { font-size: clamp(1.5rem, 3.5vw, 3.5rem); }
+      .desig-desc              { max-width: 190px; }
+
+      .about-container {
+        grid-template-columns: 0.75fr 1.25fr;
+        gap: 4vw;
+        padding: 0 5vw;
+      }
+
+      .about-heading { font-size: clamp(3rem, 7.5vw, 6rem); }
+      .sentence-1 { font-size: clamp(2rem, 4vw, 3.8rem); }
+      .sentence-2 { font-size: clamp(1.6rem, 3.2vw, 3rem); }
+      .sentence-3 { font-size: clamp(1.4rem, 2.6vw, 2.4rem); }
+      .sentence-4 { font-size: clamp(1.25rem, 2.2vw, 2rem); }
+      .sentence-5 { font-size: clamp(1.15rem, 1.8vw, 1.6rem); }
+
+      .exp-card { width: 300px; padding: 18px 20px; }
+      .exp-card__title { font-size: 1.25rem; }
+      .exp-card__desc { font-size: 0.78rem; }
+    }
+
+    /* ================================================================
+       MOBILE — under 768px
+       ================================================================ */
+    @media (max-width: 767px) {
+      .stage {
+        position: static;
+        height: auto;
+        min-height: 100svh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0 0 28px;
+      }
+
+      /* Ambient glow behind photo */
+      .glow {
+        width: 300px;
+        height: 300px;
+        bottom: 28%;
+        filter: blur(40px);
+      }
+
+      /* — Hey there — */
+      .hey-text {
+        position: static;
+        order: 1;
+        font-size: clamp(3.2rem, 13vw, 6rem);
+        padding: 28px 12px 0;
+        white-space: normal;
+        text-align: center;
+        pointer-events: none;
+      }
+
+      /* — Photo (overlaps "Hey, there" slightly) — */
+      .photo-wrap {
+        position: relative;
+        order: 2;
+        left: auto;
+        bottom: auto;
+        transform: none !important;
+        height: clamp(260px, 70vw, 480px);
+        margin-top: -8vw;
+        -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+        mask-image:         linear-gradient(to bottom, black 60%, transparent 100%);
+      }
+
+      /* — Name block — */
+      .name-block {
+        position: static;
+        order: 3;
+        padding: 0 20px;
+        width: 100%;
+      }
+
+      .name-iam   { font-size: clamp(1.3rem, 6.5vw, 2.4rem); }
+      .name-first,
+      .name-last  { font-size: clamp(2.8rem, 13vw, 6rem); }
+
+      /* — Left panel (badge only) on mobile — */
+      .left-panel {
+        position: static;
+        order: 4;
+        transform: none;
+        padding: 14px 20px 0;
+        width: 100%;
+      }
+
+      /* — Designation block — */
+      .desig-block {
+        position: static;
+        order: 5;
+        text-align: left;
+        padding: 12px 20px 0;
+        width: 100%;
+      }
+
+      .desig-title { font-size: clamp(1.8rem, 8.5vw, 3.5rem); line-height: 1; }
+      .desig-org   { margin-top: 6px; }
+      .desig-desc  { text-align: left; margin-left: 0; max-width: 100%; }
+
+      /* — Pills: horizontal icon-only circles at bottom — */
+      .pills-bar {
+        position: static;
+        order: 6;
+        flex-direction: row;
+        justify-content: center;
+        gap: 12px;
+        transform: none;
+        padding: 22px 16px 0;
+        width: 100%;
+      }
+
+      .pills-bar::before,
+      .pills-bar::after { display: none; }
+
+      .pill {
+        width: 46px;
+        height: 46px;
+        padding: 0;
+        border-radius: 50%;
+        justify-content: center;
+      }
+
+      .pill__label { display: none; }
+
+      .anim-desig { animation-name: fromLeft  !important; }
+      .anim-org   { animation-name: fromLeft  !important; }
+      .anim-desc  { animation-name: fromLeft  !important; }
+      .anim-pill-1,
+      .anim-pill-2,
+      .anim-pill-3,
+      .anim-pill-4 { animation-name: slideUp !important; }
+
+      .anim-photo {
+        opacity: 0;
+        animation: heyIn 0.7s var(--ease) 0.80s both !important;
+      }
+
+      /* — EXPERIENCE MOBILE LAYOUT (Vertical Road) — */
+      .exp-road-desktop { display: none; }
+      .exp-road-mobile  { display: block; }
+
+      .exp-header {
+        top: calc(var(--nav-h) + 8px);
+        left: 20px;
+      }
+
+      .exp-heading {
+        font-size: clamp(2rem, 8vw, 3rem);
+      }
+
+      .exp-card {
+        width: calc(100vw - 40px);
+        max-width: 330px;
+        padding: 16px 18px;
+        border-radius: 18px;
+        left: 50% !important;
+        transform: translateX(-50%) translateY(24px) !important;
+      }
+
+      .exp-card.is-reached {
+        transform: translateX(-50%) translateY(0) !important;
+      }
+
+      .exp-card--1 { top: 22% !important; }
+      .exp-card--2 { top: 50% !important; }
+      .exp-card--3 { top: 78% !important; }
+
+      .exp-card__title { font-size: 1.2rem; }
+      .exp-card__desc  { font-size: 0.8rem; margin-bottom: 10px; }
+    }
+
+    /* ================================================================
+       ================================================================
+       SECTION 4: PROJECTS STYLES (SCROLL-DRIVEN STACK-TO-ROW ENGINE)
+       ================================================================
+       ================================================================ */
+
+    .proj-section {
+      position: relative;
+      /* ================================================================
+         CHANGE: height below sets total scroll track length (300vh)
+         ================================================================ */
+      height: 300vh;
+      background: transparent;
+    }
+
+    .proj-sticky {
+      position: sticky;
+      top: 0;
+      width: 100%;
+      height: 100vh;
+      height: 100svh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+    }
+
+    /* Ambient glow now lives in the fixed page background */
+    .proj-glow {
+      display: none;
+      position: absolute;
+      width: 900px;
+      height: 900px;
+      top: 52%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle, rgba(249, 115, 22, 0.16) 0%, rgba(255, 217, 176, 0.08) 50%, transparent 72%);
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Section Header (top-left, matching Experience section) */
+    .proj-header {
+      position: absolute;
+      top: calc(var(--nav-h) + clamp(8px, 2.2vh, 24px));   /* sits below the fixed nav */
+      left: clamp(24px, 6vw, 80px);
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .proj-label {
+      display: inline-block;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #F97316;
+      margin-bottom: 6px;
+    }
+
+    .proj-heading {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: clamp(2rem, 4.5vw, 4.5rem);
+      line-height: 0.95;
+      font-weight: 300;
+      margin: 0;
+      letter-spacing: -0.02em;
+    }
+
+    .proj-heading__selected {
+      display: block;
+      color: #1a1a1a;
+    }
+
+    .proj-heading__work {
+      display: block;
+      font-style: italic;
+      color: #F97316;
+      font-weight: 400;
+    }
+
+    /* Desktop Project Row:
+       Five cards, each about 17vw wide and 58vh tall, 1.2vw gap,
+       centred horizontally and vertically in lower 75% of screen. */
+    /* The row sits below the heading (top: 58% centre, 50vh tall) so cards never touch "Selected Work". */
+    .proj-row {
+      position: absolute;
+      left: 50%;
+      top: 58%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      gap: 1.2vw;
+      align-items: center;
+      justify-content: center;
+      width: calc(5 * 17vw + 4 * 1.2vw);
+      height: 50vh;
+      z-index: 5;
+    }
+
+    /* Short screens (laptops with a bookmarks bar): shrink the heading a little more */
+    @media (max-height: 700px) {
+      .proj-heading { font-size: clamp(1.8rem, 3.6vw, 3rem); }
+    }
+
+    /* Fixed slot area acts as the stable hit box (never moves under cursor) */
+    .proj-slot {
+      position: relative;
+      width: 17vw;
+      height: 50vh;
+      flex-shrink: 0;
+      pointer-events: none; /* Enabled only once the cards are fully split (progress >= 0.6) */
+      outline: none;
+    }
+
+    .proj-row.can-hover .proj-slot {
+      pointer-events: auto;
+      cursor: pointer;
+    }
+
+    /* Scroll Transform Wrapper: moves card from central stack to slot during scroll */
+    .proj-card-scroll-wrap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      will-change: transform;
+      pointer-events: none;
+    }
+
+    /* Inner Card Element: handles hover/focus transforms (move to center + scale 1.45) */
+    .proj-card-inner {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.95);
+      box-shadow: 0 16px 36px rgba(249, 115, 22, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      text-decoration: none;
+      color: #1a1a1a;
+      pointer-events: auto;
+      transform-origin: center center;
+      transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+                  box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+                  opacity 0.4s ease,
+                  filter 0.4s ease,
+                  border-color 0.4s ease;
+    }
+
+    /* Dimming of other cards when one card is focused/hovered */
+    .proj-row.has-hovered-child .proj-card-inner {
+      opacity: 0.45;
+      filter: blur(2px);
+      transform: scale(0.97);
+    }
+
+    /* Active hovered or focused card */
+    .proj-slot.is-hovered .proj-card-inner,
+    .proj-slot:focus-visible .proj-card-inner {
+      opacity: 1 !important;
+      filter: none !important;
+      z-index: 100 !important;
+      border-color: rgba(249, 115, 22, 0.55) !important;
+      box-shadow: 0 24px 60px rgba(249, 115, 22, 0.28), 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+    }
+
+    /* Top Media / Screenshot Container (35% of card height) */
+    .proj-card-media {
+      position: relative;
+      width: 100%;
+      height: 30%;
+      min-height: 96px;
+      background: linear-gradient(135deg, rgba(255, 250, 243, 0.95), rgba(255, 217, 176, 0.55));
+      border-bottom: 1px solid rgba(249, 115, 22, 0.12);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    /* Fallback with soft gradient & project number when screenshot image is not present */
+    .proj-media-fallback {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, rgba(255, 248, 240, 0.95), rgba(255, 224, 194, 0.7));
+      z-index: 1;
+    }
+
+    .proj-media-fallback-num {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 2.3rem;
+      font-weight: 700;
+      color: rgba(249, 115, 22, 0.35);
+      line-height: 1;
+    }
+
+    .proj-media-fallback-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(26, 26, 26, 0.4);
+    }
+
+    /* Animated preview drawn in SVG (see .pv-* below). Replaced automatically by a real
+       video (videos/projectN.mp4) or screenshot (images/projectN.jpg) when those files exist. */
+    .pv { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+    .proj-card-video {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; z-index: 2;
+    }
+    .proj-card-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 2;
+    }
+
+    .proj-card-img.is-missing {
+      display: none;
+    }
+
+    /* Big faint number in Fraunces at the top right of the media area */
+    .proj-card-watermark {
+      position: absolute;
+      top: 6px;
+      right: 12px;
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: rgba(249, 115, 22, 0.18);
+      line-height: 1;
+      pointer-events: none;
+      z-index: 3;
+      user-select: none;
+    }
+
+    /* Card Content Area */
+    .proj-card-body {
+      padding: 16px 18px 14px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+    }
+
+    /* Small Orange Pill Tag */
+    .proj-card-tag {
+      align-self: flex-start;
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: rgba(249, 115, 22, 0.12);
+      color: #F97316;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    /* Title: Fraunces, 1.3rem */
+    .proj-card-title {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 1.22rem;
+      font-weight: 600;
+      color: #1a1a1a;
+      line-height: 1.25;
+      margin: 0 0 6px 0;
+      letter-spacing: -0.01em;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* Description: Inter, 0.9rem, clipped to 3 lines on small cards */
+    .proj-card-desc {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.86rem;
+      line-height: 1.45;
+      color: #444444;
+      margin: 0 0 10px 0;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      flex-shrink: 0;
+      transition: all 0.3s ease;
+    }
+
+    /* Full description visible on hovered / enlarged / mobile-active cards */
+    .proj-slot.is-hovered .proj-card-desc,
+    .proj-slot:focus-visible .proj-card-desc,
+    .proj-slot.is-mobile-active .proj-card-desc {
+      -webkit-line-clamp: unset;
+      overflow: visible;
+    }
+    .proj-slot.is-mobile-active .proj-card-chips { max-height: none; }
+
+    /* ---------- Animated project previews (pure SVG + CSS, no files needed) ---------- */
+    .pv .pv-line   { stroke: #F97316; stroke-opacity: .28; stroke-width: 1; }
+    .pv .pv-node   { fill: #F97316; transform-box: fill-box; transform-origin: center; animation: pvPulse 2.4s ease-in-out infinite; }
+    .pv .pv-ecg    { fill: none; stroke: #F97316; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round;
+                     stroke-dasharray: 1; stroke-dashoffset: 1; animation: pvDraw 3.4s ease-in-out infinite; }
+    .pv .pv-bub    { transform-box: fill-box; transform-origin: left center; opacity: 0; animation: pvBubble 7s ease-in-out infinite; }
+    .pv .pv-bub.r  { transform-origin: right center; }
+    .pv .pv-dot    { fill: #F97316; animation: pvBlink 1.1s ease-in-out infinite; }
+    .pv .pv-spin   { transform-box: view-box; transform-origin: 100px 50px; animation: pvSpin 14s linear infinite; }
+    .pv .pv-sweep  { transform-box: view-box; transform-origin: 100px 50px; animation: pvSpin 4s linear infinite; }
+    .pv .pv-shield { transform-box: fill-box; transform-origin: center; animation: pvPulse 2.8s ease-in-out infinite; }
+    .pv .pv-lane   { stroke: rgba(26,26,26,.35); stroke-width: 1.4; stroke-dasharray: 8 8; animation: pvLane 1s linear infinite; }
+    .pv .pv-car    { animation: pvDrive linear infinite; }
+    .pv .pv-bar    { transform-box: fill-box; transform-origin: 50% 100%; animation: pvGrow 3.2s ease-in-out infinite; }
+    .pv .pv-fit    { fill: none; stroke: #1a1a1a; stroke-opacity: .55; stroke-width: 1.6; stroke-linecap: round;
+                     stroke-dasharray: 1; stroke-dashoffset: 1; animation: pvDraw 3.2s ease-in-out infinite; }
+    @keyframes pvPulse  { 0%,100% { transform: scale(1); opacity: .9; } 50% { transform: scale(1.55); opacity: .45; } }
+    @keyframes pvDraw   { 0% { stroke-dashoffset: 1; } 55% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: -1; } }
+    @keyframes pvBubble { 0%,6% { opacity: 0; transform: scale(.6); } 14%,80% { opacity: 1; transform: scale(1); } 92%,100% { opacity: 0; transform: scale(1); } }
+    @keyframes pvBlink  { 0%,100% { opacity: .25; } 50% { opacity: 1; } }
+    @keyframes pvSpin   { to { transform: rotate(360deg); } }
+    @keyframes pvLane   { to { stroke-dashoffset: -16; } }
+    @keyframes pvDrive  { from { transform: translateX(-60px); } to { transform: translateX(260px); } }
+    @keyframes pvGrow   { 0%,100% { transform: scaleY(.35); } 50% { transform: scaleY(1); } }
+    @media (prefers-reduced-motion: reduce) { .pv * { animation: none !important; opacity: 1 !important; stroke-dashoffset: 0 !important; } }
+
+    /* Tool Chips */
+    .proj-card-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: auto;
+      margin-bottom: 10px;
+    }
+
+    .proj-card-chips { max-height: 24px; overflow: hidden; flex-shrink: 0; }   /* one row on small cards */
+
+    /* HOVERED CARD: grows to fit ALL its content (nothing is cut off) and shows a bigger preview */
+    .proj-slot.is-hovered .proj-card-inner,
+    .proj-slot:focus-visible .proj-card-inner {
+      height: auto;
+      min-height: 100%;
+    }
+    .proj-slot.is-hovered .proj-card-media,
+    .proj-slot:focus-visible .proj-card-media { height: 150px; flex: none; }
+    .proj-slot.is-hovered .proj-card-title,
+    .proj-slot:focus-visible .proj-card-title { -webkit-line-clamp: unset; overflow: visible; }
+    .proj-slot.is-hovered .proj-card-chips,
+    .proj-slot:focus-visible .proj-card-chips { max-height: none; margin-top: 4px; }
+
+    .proj-chip {
+      display: inline-block;
+      padding: 3px 7px;
+      border-radius: 5px;
+      background: rgba(0, 0, 0, 0.05);
+      color: #4a4a4a;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 500;
+    }
+
+    /* Card Footer: View on GitHub ↗ */
+    .proj-card-footer {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
+      color: #F97316;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.76rem;
+      font-weight: 600;
+    }
+
+    .proj-card-footer svg {
+      transition: transform 0.25s ease;
+    }
+
+    .proj-slot.is-hovered .proj-card-footer svg,
+    .proj-slot:focus-visible .proj-card-footer svg {
+      transform: translate(2px, -2px);
+    }
+
+    /* Scroll Hint at bottom centre */
+    .proj-scroll-hint {
+      position: absolute;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #888888;
+      pointer-events: none;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      opacity: 0.85;
+      transition: opacity 0.3s ease;
+    }
+
+    .proj-scroll-hint.is-hidden {
+      opacity: 0;
+    }
+
+    .proj-scroll-hint svg {
+      width: 14px;
+      height: 14px;
+      stroke: #888888;
+      stroke-width: 2;
+      animation: hintBounce 1.8s infinite ease-in-out;
+    }
+
+    /* Mobile Responsive (< 768px) */
+    @media (max-width: 768px) {
+      .proj-section {
+        height: 300vh;
+      }
+
+      .proj-row {
+        position: absolute;
+        left: 50%;
+        top: 54%;
+        transform: translate(-50%, -50%);
+        width: 78vw;
+        height: 52vh;
+        display: block; /* Stacked container on mobile */
+      }
+
+      .proj-slot {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 78vw;
+        height: 52vh;
+        pointer-events: auto; /* Tap enabled on mobile */
+      }
+
+      .proj-card-scroll-wrap {
+        width: 100%;
+        height: 100%;
+      }
+
+      .proj-card-inner {
+        width: 100%;
+        height: 100%;
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+      }
+
+      /* Mobile tapped active state: centered and enlarged (scale 1.1) */
+      .proj-slot.is-mobile-active .proj-card-inner {
+        transform: translate3d(0, 0, 0) scale(1.1) !important;
+        z-index: 60 !important;
+        box-shadow: 0 20px 48px rgba(249, 115, 22, 0.32) !important;
+        border-color: rgba(249, 115, 22, 0.55) !important;
+      }
+
+      .proj-card-title {
+        font-size: 1.15rem;
+      }
+
+      .proj-card-desc {
+        font-size: 0.82rem;
+      }
+
+      .proj-header {
+        top: calc(var(--nav-h) + 8px);
+        left: 24px;
+      }
+
+      .proj-heading {
+        font-size: 2.4rem;
+      }
+    }
+
+    /* Accessibility / Reduced Motion Fallback */
+    @media (prefers-reduced-motion: reduce) {
+      .proj-section {
+        height: auto !important;
+      }
+
+      .proj-sticky {
+        position: static !important;
+        height: auto !important;
+        overflow: visible !important;
+        padding: 90px 6vw 80px !important;
+        display: block !important;
+      }
+
+      .proj-header {
+        position: static !important;
+        margin-bottom: 36px !important;
+      }
+
+      .proj-row {
+        position: static !important;
+        transform: none !important;
+        width: 100% !important;
+        height: auto !important;
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 24px !important;
+      }
+
+      .proj-slot {
+        position: static !important;
+        width: 100% !important;
+        height: auto !important;
+        pointer-events: auto !important;
+      }
+
+      .proj-card-scroll-wrap {
+        position: static !important;
+        transform: none !important;
+        width: 100% !important;
+        height: auto !important;
+      }
+
+      .proj-card-inner {
+        position: static !important;
+        transform: none !important;
+        height: auto !important;
+        min-height: 480px !important;
+      }
+
+      .proj-card-desc {
+        -webkit-line-clamp: unset !important;
+        overflow: visible !important;
+      }
+
+      .proj-scroll-hint {
+        display: none !important;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) and (max-width: 900px) {
+      .proj-row {
+        grid-template-columns: 1fr !important;
+      }
+    }
+
+    /* ================================================================
+       ================================================================
+       SECTION 5: LET'S CONNECT (CONTACT & FOOTER STYLES)
+       - Normal scroll (not pinned), min-height 100vh
+       - Two-column editorial layout: Left details, Right message box
+       - Floating decorative ambient orbs
+       - Staggered entrance animations
+       - Accessible form styling & responsive footer
+       ================================================================
+       ================================================================ */
+
+    .contact-section {
+      position: relative;
+      min-height: 100vh;
+      background: transparent;
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 90px);
+      mask-image: linear-gradient(to bottom, transparent 0, #000 90px);   /* soft top edge, no seam */
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      color: #1a1a1a;
+      padding-top: clamp(60px, 10vh, 120px);
+    }
+
+    /* Decorative ambient drifting background orbs */
+    .contact-bg-orb {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      filter: blur(85px);
+      z-index: 0;
+    }
+
+    .contact-bg-orb--1 {
+      width: 520px;
+      height: 520px;
+      top: 5%;
+      left: -120px;
+      background: radial-gradient(circle, rgba(249, 115, 22, 0.16) 0%, rgba(255, 217, 176, 0.05) 70%, transparent 100%);
+      animation: driftContactOrb1 20s ease-in-out infinite alternate;
+    }
+
+    .contact-bg-orb--2 {
+      width: 620px;
+      height: 620px;
+      bottom: 50px;
+      right: -120px;
+      background: radial-gradient(circle, rgba(249, 115, 22, 0.14) 0%, rgba(255, 217, 176, 0.04) 70%, transparent 100%);
+      animation: driftContactOrb2 24s ease-in-out infinite alternate;
+    }
+
+    .contact-bg-orb--3 {
+      width: 440px;
+      height: 440px;
+      top: 45%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle, rgba(251, 146, 60, 0.12) 0%, rgba(255, 217, 176, 0.03) 70%, transparent 100%);
+      animation: driftContactOrb3 22s ease-in-out infinite alternate;
+    }
+
+    @keyframes driftContactOrb1 {
+      0%   { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(50px, 35px) scale(1.08); }
+    }
+
+    @keyframes driftContactOrb2 {
+      0%   { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(-45px, -35px) scale(1.06); }
+    }
+
+    @keyframes driftContactOrb3 {
+      0%   { transform: translate(-50%, -50%) scale(1); }
+      100% { transform: translate(-46%, -54%) scale(1.12); }
+    }
+
+    /* Main two-column container */
+    .contact-container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 7vw clamp(40px, 6vh, 80px);
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 6vw;
+      align-items: center;
+      flex: 1;
+    }
+
+    /* ================================================================
+       LEFT COLUMN: CONTACT DETAILS & IDENTITY
+       ================================================================ */
+
+    .contact-left {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .contact-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #F97316;
+      margin-bottom: 8px;
+      display: inline-block;
+    }
+
+    .contact-heading {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: clamp(3rem, 7.5vw, 6.8rem);
+      line-height: 0.95;
+      font-weight: 300;
+      margin: 0 0 16px 0;
+      letter-spacing: -0.025em;
+    }
+
+    .contact-heading__lets {
+      display: block;
+      color: #1a1a1a;
+    }
+
+    .contact-heading__connect {
+      display: block;
+      font-style: italic;
+      color: #F97316;
+      font-weight: 400;
+    }
+
+    .contact-heading__dot {
+      color: #F97316;
+      font-style: normal;
+    }
+
+    .contact-subline {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: clamp(1.2rem, 2.2vw, 1.45rem);
+      font-weight: 400;
+      color: #2c2c2c;
+      line-height: 1.4;
+      margin: 0 0 24px 0;
+    }
+
+    /* Open to new opportunities pill badge */
+    .contact-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      align-self: flex-start;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(249, 115, 22, 0.2);
+      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.06);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 30px;
+    }
+
+    .contact-pulse-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #16a34a;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .contact-pulse-dot::after {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 50%;
+      background: rgba(22, 163, 74, 0.45);
+      animation: contactPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    @keyframes contactPulse {
+      0%, 100% { transform: scale(1); opacity: 0.9; }
+      50%      { transform: scale(1.9); opacity: 0; }
+    }
+
+    /* Contact details list */
+    .contact-details-list {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      margin-bottom: 32px;
+    }
+
+    .contact-detail-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .contact-icon-circle {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(249, 115, 22, 0.22);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #F97316;
+      flex-shrink: 0;
+    }
+
+    .contact-icon-circle svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .contact-detail-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .contact-detail-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #777777;
+      margin-bottom: 2px;
+    }
+
+    .contact-link,
+    .contact-val {
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      color: #1a1a1a;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .contact-link:hover {
+      color: #F97316;
+    }
+
+    /* Social icons and resume row */
+    .contact-actions-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 8px;
+    }
+
+    .contact-social-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(249, 115, 22, 0.25);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #1a1a1a;
+      text-decoration: none;
+      transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+                  background 0.25s ease,
+                  color 0.25s ease,
+                  box-shadow 0.25s ease,
+                  border-color 0.25s ease;
+    }
+
+    .contact-social-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    .contact-social-btn:hover {
+      transform: translateY(-3px);
+      background: #F97316;
+      color: #ffffff;
+      border-color: #F97316;
+      box-shadow: 0 8px 20px rgba(249, 115, 22, 0.35);
+    }
+
+    /* Download Resume button */
+    .contact-resume-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 11px 22px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1.5px solid #F97316;
+      color: #F97316;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+      text-decoration: none;
+      box-shadow: 0 4px 14px rgba(249, 115, 22, 0.08);
+      transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+                  background 0.25s ease,
+                  color 0.25s ease,
+                  box-shadow 0.25s ease;
+    }
+
+    .contact-resume-btn:hover {
+      transform: translateY(-3px);
+      background: #F97316;
+      color: #ffffff;
+      box-shadow: 0 8px 22px rgba(249, 115, 22, 0.32);
+    }
+
+    .contact-resume-btn svg {
+      stroke: currentColor;
+    }
+
+    /* ================================================================
+       RIGHT COLUMN: THE MESSAGE BOX CARD
+       ================================================================ */
+
+    .contact-right {
+      position: relative;
+    }
+
+    .contact-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.95);
+      border-radius: 28px;
+      box-shadow: 0 20px 48px rgba(249, 115, 22, 0.08), 0 4px 16px rgba(0, 0, 0, 0.04);
+      padding: clamp(2rem, 3.5vw, 2.75rem);
+      position: relative;
+    }
+
+    .contact-card-title {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 1.85rem;
+      font-weight: 600;
+      color: #1a1a1a;
+      line-height: 1.2;
+      margin: 0 0 6px 0;
+      letter-spacing: -0.01em;
+    }
+
+    .contact-card-subline {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      color: #666666;
+      margin: 0 0 24px 0;
+    }
+
+    /* Form Layout & Fields */
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .form-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 7px;
+    }
+
+    .form-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #2c2c2c;
+      margin-bottom: 7px;
+      transition: color 0.2s ease;
+    }
+
+    .form-required {
+      color: #F97316;
+      margin-left: 2px;
+    }
+
+    .form-group:focus-within .form-label {
+      color: #F97316;
+    }
+
+    .form-char-counter {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      color: #888888;
+      font-weight: 500;
+    }
+
+    .form-input {
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      color: #1a1a1a;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(26, 26, 26, 0.14);
+      border-radius: 14px;
+      padding: 0.9rem 1rem;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .form-input::placeholder {
+      color: #9ca3af;
+      font-weight: 400;
+    }
+
+    .form-input:focus {
+      background: #ffffff;
+      border-color: #F97316;
+      box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.15);
+    }
+
+    .form-input.is-invalid {
+      border-color: #ef4444;
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.14);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 120px;
+      line-height: 1.5;
+    }
+
+    .form-error {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      color: #dc2626;
+      margin-top: 5px;
+      display: none;
+      font-weight: 500;
+    }
+
+    .form-error.is-visible {
+      display: block;
+    }
+
+    /* Honeypot field (hidden from view) */
+    .form-honeypot {
+      display: none !important;
+      position: absolute;
+      left: -9999px;
+      opacity: 0;
+    }
+
+    /* Submit Button */
+    .form-submit-btn {
+      width: 100%;
+      padding: 0.95rem 1.6rem;
+      border: none;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #F97316 0%, #FB923C 100%);
+      color: #ffffff;
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(249, 115, 22, 0.28);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 6px;
+      position: relative;
+      transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+                  box-shadow 0.25s ease,
+                  opacity 0.2s ease;
+      min-height: 48px;
+    }
+
+    .form-submit-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(249, 115, 22, 0.38);
+    }
+
+    .form-submit-btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .form-submit-btn:disabled {
+      opacity: 0.75;
+      cursor: not-allowed;
+    }
+
+    .submit-btn-content {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: opacity 0.2s ease;
+    }
+
+    .submit-btn-icon {
+      transition: transform 0.25s ease;
+    }
+
+    .form-submit-btn:hover:not(:disabled) .submit-btn-icon {
+      transform: translateX(4px);
+    }
+
+    /* Sending spinner */
+    .submit-btn-spinner {
+      display: none;
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      animation: spinSubmit 0.75s linear infinite;
+    }
+
+    .form-submit-btn.is-sending .submit-btn-spinner {
+      display: inline-block;
+    }
+
+    @keyframes spinSubmit {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Fallback banner (when submission fails or placeholder endpoint is active) */
+    .form-fallback-banner {
+      margin-top: 14px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: rgba(254, 242, 242, 0.95);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #991b1b;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      line-height: 1.45;
+    }
+
+    .fallback-banner-text {
+      margin: 0 0 10px 0;
+    }
+
+    .fallback-email-link {
+      color: #F97316;
+      font-weight: 600;
+      text-decoration: underline;
+    }
+
+    .fallback-mailto-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border-radius: 8px;
+      background: #F97316;
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-decoration: none;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .fallback-mailto-btn:hover {
+      background: #ea580c;
+      transform: translateY(-1px);
+    }
+
+    /* Success State */
+    .form-success-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 2.5rem 1rem;
+    }
+
+    .success-icon-wrap {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: rgba(249, 115, 22, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .success-check-svg {
+      width: 48px;
+      height: 48px;
+    }
+
+    .success-circle {
+      stroke-dasharray: 176;
+      stroke-dashoffset: 176;
+      animation: checkCircle 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    .success-check {
+      stroke-dasharray: 36;
+      stroke-dashoffset: 36;
+      animation: checkMark 0.4s 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    @keyframes checkCircle {
+      to { stroke-dashoffset: 0; }
+    }
+
+    @keyframes checkMark {
+      to { stroke-dashoffset: 0; }
+    }
+
+    .success-title {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 1.8rem;
+      color: #1a1a1a;
+      margin: 0 0 8px 0;
+    }
+
+    .success-desc {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      color: #4a4a4a;
+      line-height: 1.5;
+      max-width: 380px;
+      margin: 0 0 24px 0;
+    }
+
+    .success-reset-btn {
+      padding: 9px 20px;
+      border-radius: 999px;
+      background: transparent;
+      border: 1.5px solid #F97316;
+      color: #F97316;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .success-reset-btn:hover {
+      background: #F97316;
+      color: #ffffff;
+    }
+
+    /* ================================================================
+       FOOTER COMPONENT
+       ================================================================ */
+
+    .contact-footer {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      margin-top: auto;
+    }
+
+    .footer-divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(26, 26, 26, 0.1) 15%, rgba(249, 115, 22, 0.25) 50%, rgba(26, 26, 26, 0.1) 85%, transparent 100%);
+    }
+
+    .footer-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 22px 7vw 26px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .footer-copy {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      color: #444444;
+      margin: 0;
+    }
+
+    .footer-built {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      color: #777777;
+      margin: 0;
+      text-align: center;
+    }
+
+    .footer-back-to-top {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(249, 115, 22, 0.22);
+      color: #1a1a1a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+      transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+                  background 0.25s ease,
+                  color 0.25s ease,
+                  box-shadow 0.25s ease,
+                  border-color 0.25s ease;
+      outline: none;
+    }
+
+    .footer-back-to-top:hover {
+      transform: translateY(-3px);
+      background: #F97316;
+      color: #ffffff;
+      border-color: #F97316;
+      box-shadow: 0 6px 16px rgba(249, 115, 22, 0.32);
+    }
+
+    .footer-back-to-top svg {
+      stroke: currentColor;
+    }
+
+    /* ================================================================
+       ENTRANCE ANIMATION (INTERSECTION OBSERVER)
+       ================================================================ */
+
+    .contact-anim-item {
+      opacity: 0;
+      transform: translateY(24px);
+      filter: blur(6px);
+      transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+                  opacity 0.7s ease,
+                  filter 0.7s ease;
+    }
+
+    .contact-anim-card {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+                  opacity 0.8s ease;
+    }
+
+    .contact-anim-field {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+                  opacity 0.6s ease;
+    }
+
+    /* Staggered triggers when .contact-section has .is-in-view */
+    .contact-section.is-in-view .contact-anim-item {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+
+    .contact-section.is-in-view .contact-anim-item:nth-child(1) { transition-delay: 0.05s; }
+    .contact-section.is-in-view .contact-anim-item:nth-child(2) { transition-delay: 0.15s; }
+    .contact-section.is-in-view .contact-anim-item:nth-child(3) { transition-delay: 0.25s; }
+    .contact-section.is-in-view .contact-anim-item:nth-child(4) { transition-delay: 0.35s; }
+    .contact-section.is-in-view .contact-anim-item:nth-child(5) { transition-delay: 0.45s; }
+    .contact-section.is-in-view .contact-anim-item:nth-child(6) { transition-delay: 0.55s; }
+
+    .contact-section.is-in-view .contact-anim-card {
+      opacity: 1;
+      transform: translateY(0);
+      transition-delay: 0.2s;
+    }
+
+    .contact-section.is-in-view .contact-anim-field {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .contact-section.is-in-view .contact-anim-field:nth-child(1) { transition-delay: 0.35s; }
+    .contact-section.is-in-view .contact-anim-field:nth-child(2) { transition-delay: 0.45s; }
+    .contact-section.is-in-view .contact-anim-field:nth-child(3) { transition-delay: 0.55s; }
+    .contact-section.is-in-view .contact-anim-field:nth-child(4) { transition-delay: 0.65s; }
+    .contact-section.is-in-view .contact-anim-field:nth-child(5) { transition-delay: 0.75s; }
+
+    /* ================================================================
+       MOBILE RESPONSIVE (< 768px)
+       ================================================================ */
+
+    @media (max-width: 768px) {
+      .contact-section {
+        padding-top: 60px;
+      }
+
+      .contact-container {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        padding: 0 20px 40px;
+      }
+
+      .contact-heading {
+        font-size: 16vw;
+      }
+
+      .contact-card {
+        padding: 1.6rem 1.4rem;
+        border-radius: 22px;
+      }
+
+      .contact-card-title {
+        font-size: 1.5rem;
+      }
+
+      /* Font-size 16px prevents iOS/Android auto-zoom on input focus */
+      .form-input {
+        font-size: 16px;
+        padding: 0.85rem 0.95rem;
+      }
+
+      .form-submit-btn,
+      .contact-resume-btn {
+        min-height: 48px;
+      }
+
+      .footer-inner {
+        flex-direction: column;
+        text-align: center;
+        gap: 14px;
+        padding: 24px 20px 32px;
+      }
+
+      .footer-col--centre {
+        order: 2;
+      }
+
+      .footer-col--right {
+        order: 1;
+      }
+
+      .footer-col--left {
+        order: 3;
+      }
+    }
+
+    /* Accessibility / Reduced Motion Fallback */
+    @media (prefers-reduced-motion: reduce) {
+      .contact-bg-orb {
+        animation: none !important;
+      }
+      .contact-anim-item,
+      .contact-anim-card,
+      .contact-anim-field {
+        opacity: 1 !important;
+        transform: none !important;
+        filter: none !important;
+        transition: none !important;
+      }
+      .contact-pulse-dot::after {
+        animation: none !important;
+      }
+      .form-submit-btn,
+      .contact-social-btn,
+      .contact-resume-btn,
+      .footer-back-to-top {
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- ================================================================
+       TOP NAVIGATION — fixed bar, smooth-scrolls to each section.
+       CHANGE: link text / order here. Targets are the section ids:
+       #about  #experience  #projects  #contact   (see NAV SCRIPT at the bottom)
+       ================================================================ -->
+  <nav class="site-nav" id="siteNav" aria-label="Primary">
+    <button type="button" class="site-nav__toggle" id="siteNavToggle" aria-label="Open menu" aria-expanded="false" aria-controls="siteNavLinks">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="site-nav__links" id="siteNavLinks">
+      <li><a class="site-nav__link" role="link" tabindex="0" data-target="about">About Me</a></li>
+      <li><a class="site-nav__link" role="link" tabindex="0" data-target="experience">Experience</a></li>
+      <li><a class="site-nav__link" role="link" tabindex="0" data-target="projects">Projects</a></li>
+      <li><a class="site-nav__link" role="link" tabindex="0" data-target="contact">Contact Me</a></li>
+    </ul>
+  </nav>
+
+  <!-- ================================================================
+       SECTION 1: HERO
+       ================================================================ -->
+  <main class="stage" id="top" role="main">
+
+    <!-- Orange ambient glow (decorative) -->
+    <div class="glow" aria-hidden="true"></div>
+
+    <!-- ================================================================
+         1. HEY THERE — z-index 1, behind the photo
+         CHANGE: edit the greeting text here
+         ================================================================ -->
+    <div class="hey-text anim-hey" aria-hidden="true">
+      Hey<span class="hey-accent">,</span>&nbsp; there
+    </div>
+
+    <!-- ================================================================
+         2. PROFILE PHOTO — z-index 2, centred, bottom-anchored
+         CHANGE: replace src with your portrait PNG path (transparent bg)
+                 e.g.  src="images/profile.png"
+         ================================================================ -->
+    <div class="photo-wrap anim-photo">
+      <img
+        src="images/profile.png"
+        alt="Portrait of Bincy Manuel, Data Analyst"
+        width="auto"
+        height="auto"
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+        onerror="this.onerror=null; this.src='bincy_avatar.png';"
+      />
+    </div>
+
+    <!-- ================================================================
+         3. NAME BLOCK — z-index 3, bottom-left
+         CHANGE: text inside each span below
+         ================================================================ -->
+    <div class="name-block" aria-label="Bincy Manuel">
+      <!-- CHANGE "I AM" prefix text: -->
+      <span class="name-iam anim-iam">I Am</span>
+      <!-- CHANGE first name: -->
+      <span class="name-first anim-first">Bincy</span>
+      <!-- CHANGE last name: -->
+      <span class="name-last anim-last">Manuel</span>
+    </div>
+
+    <!-- ================================================================
+         4. DESIGNATION BLOCK — z-index 3, bottom-right
+         Description shown here as italic quote below the org name
+         CHANGE: .desig-title, .desig-org, .desig-desc text
+         ================================================================ -->
+    <div class="desig-block">
+      <!-- CHANGE DESIGNATION (shown on two lines): -->
+      <div class="desig-title anim-desig">
+        Data<br>Analyst
+      </div>
+      <!-- CHANGE ORGANISATION: -->
+      <div class="desig-org anim-org">
+        Institute of Small Enterprises<br>and Development
+      </div>
+      <!-- CHANGE DESCRIPTION (max 20 words) — shown in italic quotes: -->
+      <p class="desig-desc anim-desc">
+        &ldquo;I turn raw data into clear insights, dashboards, and decisions that help organisations work smarter.&rdquo;
+      </p>
+    </div>
+
+    <!-- ================================================================
+         5. LEFT PANEL — availability badge only
+         (description moved to right side under DATA ANALYST)
+         CHANGE: badge text
+         ================================================================ -->
+    <div class="left-panel">
+      <!-- CHANGE BADGE TEXT: -->
+      <div class="badge anim-badge" role="status" aria-label="Availability status">
+        <span class="badge__dot" aria-hidden="true"></span>
+        Available for new opportunities
+      </div>
+    </div>
+
+    <!-- ================================================================
+         6. CONTACT PILLS — right side (desktop) / bottom row (mobile)
+         CHANGE: href values below for LinkedIn, GitHub, Email, SMS
+         ================================================================ -->
+    <nav class="pills-bar" aria-label="Contact links">
+
+      <!-- LinkedIn — CHANGE href to your LinkedIn URL -->
+      <a
+        href="https://www.linkedin.com/in/bincy-manuel/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="pill anim-pill-1"
+        aria-label="LinkedIn profile (opens in new tab)"
+      >
+        <!-- LinkedIn SVG icon (inline, no library) -->
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+          <rect x="2" y="9" width="4" height="12"/>
+          <circle cx="4" cy="4" r="2"/>
+        </svg>
+        <span class="pill__label">LinkedIn</span>
+      </a>
+
+      <!-- GitHub — CHANGE href to your GitHub URL -->
+      <a
+        href="https://github.com/BincyManuel"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="pill anim-pill-2"
+        aria-label="GitHub profile (opens in new tab)"
+      >
+        <!-- GitHub SVG icon -->
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+        </svg>
+        <span class="pill__label">GitHub</span>
+      </a>
+
+      <!-- Email — CHANGE href to your email address -->
+      <a
+        href="mailto:bincymanuel085@gmail.com"
+        class="pill anim-pill-3"
+        aria-label="Send email to Bincy Manuel"
+      >
+        <!-- Mail SVG icon -->
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+          <polyline points="22,6 12,13 2,6"/>
+        </svg>
+        <span class="pill__label">Mail</span>
+      </a>
+
+      <!-- SMS — CHANGE href: replace number with yours (no spaces) -->
+      <a
+        href="sms:+919995135224"
+        class="pill anim-pill-4"
+        aria-label="Send SMS to Bincy Manuel"
+      >
+        <!-- Message bubble SVG icon -->
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+        <span class="pill__label">SMS</span>
+      </a>
+
+    </nav>
+
+  </main>
+
+  <!-- ================================================================
+       SECTION 2: ABOUT ME
+       - 600vh scroll wrapper
+       - Inner sticky container pinned at top: 0, 100vh
+       - 2-Column Grid: LEFT "About Me" Heading, RIGHT Single Text Stage
+       - ONE SENTENCE AT A TIME (shrinking sizes from 1 to 5)
+       ================================================================ -->
+  <section class="about5" id="about" aria-label="About Me">
+    <div class="about5__inner">
+
+      <!-- Big cursive "About me": it writes itself in, and shines under your cursor -->
+      <div class="a5-script-wrap">
+        <h2 class="a5-script" id="a5Script">About<br>me</h2>
+      </div>
+
+      <div class="a5-copy">
+        <h3 class="a5-title rv" style="--d:.08s">Turning data into <em>decisions,</em> and ideas into AI.</h3>
+        <p class="a5-text rv" style="--d:.16s">Hi, I'm Bincy, an aspiring AI/ML Engineer. I'm currently working as a Data Analyst at the Institute of Small Enterprises and Development (ISED), where I turn raw, messy data into clear insights people can act on.</p>
+        <p class="a5-text rv" style="--d:.22s">I'm passionate about building AI and ML models, and I'm open to freelance projects. If you have a dataset, an idea or a problem to solve, let's talk.</p>
+
+        <div class="a5-stats rv" style="--d:.3s">
+          <div><div class="a5-stat__num">3</div><div class="a5-stat__lbl">Roles &amp;<br>internships</div></div>
+          <div><div class="a5-stat__num">5</div><div class="a5-stat__lbl">Projects<br>built</div></div>
+          <div><div class="a5-stat__num">M.Sc.</div><div class="a5-stat__lbl">Computer Science<br>(Data Science)</div></div>
+        </div>
+        <p class="a5-text rv" style="--d:.34s; margin-top:14px">Education: Integrated M.Sc. in Computer Science (Data Science), Sacred Heart College, Thevara, affiliated to Mahatma Gandhi University.</p>
+
+
+        <div class="a5-actions rv" style="--d:.44s">
+          <button type="button" class="a5-btn a5-btn--solid" id="aboutTalk">Let's work together</button>
+          <a href="resume.pdf" download class="a5-btn a5-btn--ghost">Download Resume</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       SECTION 3: EXPERIENCE (SCROLL-DRIVEN ROADMAP)
+       - 500vh scroll wrapper
+       - Inner sticky container pinned at top: 0, 100vh
+       - Smooth S-shaped road with 3 stops (18%, 52%, 86%)
+       - Cyclist rides along path, wheels spin, cards reveal at stops
+       ================================================================ -->
+  <section class="exp-section" id="experience" aria-label="Experience Roadmap">
+    <div class="exp-sticky">
+
+      <!-- Ambient glow -->
+      <div class="exp-glow" aria-hidden="true"></div>
+
+      <!-- Section Header (top-left) -->
+      <div class="exp-header">
+        <span class="exp-label">EXPERIENCE</span>
+        <h2 class="exp-heading">
+          <span class="exp-heading__my">My</span>
+          <span class="exp-heading__journey">Journey</span>
+        </h2>
+      </div>
+
+      <!-- Scene Container (Road SVG + Cyclist + Cards) -->
+      <div class="exp-scene" id="expScene">
+
+        <!-- ================================================================
+             DESKTOP ROAD SVG (viewBox 0 0 1600 700)
+             ================================================================ -->
+        <svg class="exp-road-svg exp-road-desktop" id="expRoadSvgDesktop" viewBox="0 0 1600 700" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <defs>
+            <linearGradient id="roadGlowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#F97316" stop-opacity="0.95" />
+              <stop offset="100%" stop-color="#FBBF24" stop-opacity="0.95" />
+            </linearGradient>
+            <filter id="roadGlowFilter" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="5" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <!-- Radial gradient for marker pulse -->
+            <radialGradient id="markerPulseGrad">
+              <stop offset="0%" stop-color="#F97316" stop-opacity="0.7" />
+              <stop offset="100%" stop-color="#F97316" stop-opacity="0" />
+            </radialGradient>
+          </defs>
+
+          <!-- Background Decorations (Subtle Sun, Clouds, Hills, Trees) -->
+          <!-- Sun top-right -->
+          <circle cx="1460" cy="80" r="48" fill="rgba(249, 115, 22, 0.15)" />
+          <circle cx="1460" cy="80" r="32" fill="rgba(249, 115, 22, 0.28)" />
+
+          <!-- Clouds -->
+          <path d="M 280 90 Q 300 75 330 80 Q 360 70 390 85 Q 420 80 430 100 Q 430 115 390 120 L 290 120 Q 270 110 280 90 Z" fill="rgba(255, 255, 255, 0.65)" />
+          <path d="M 920 60 Q 940 45 970 50 Q 1000 40 1025 55 Q 1050 50 1060 70 Q 1050 85 1020 90 L 930 90 Q 910 80 920 60 Z" fill="rgba(255, 255, 255, 0.55)" />
+
+          <!-- Background Hills -->
+          <linearGradient id="hillFade" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#F97316" stop-opacity="0.09"/><stop offset="100%" stop-color="#F97316" stop-opacity="0"/></linearGradient>
+          <path d="M 0 640 Q 240 540 500 630 Q 780 520 1060 620 Q 1340 530 1600 610 L 1600 700 L 0 700 Z" fill="url(#hillFade)" />
+
+          <!-- Subtle Trees -->
+          <g transform="translate(180, 480)" opacity="0.45">
+            <line x1="0" y1="0" x2="0" y2="18" stroke="#8d6e63" stroke-width="3" />
+            <circle cx="0" cy="-6" r="14" fill="#a3b18a" />
+          </g>
+          <g transform="translate(680, 200)" opacity="0.45">
+            <line x1="0" y1="0" x2="0" y2="16" stroke="#8d6e63" stroke-width="2.5" />
+            <circle cx="0" cy="-6" r="12" fill="#588157" />
+          </g>
+          <g transform="translate(1080, 460)" opacity="0.45">
+            <line x1="0" y1="0" x2="0" y2="18" stroke="#8d6e63" stroke-width="3" />
+            <circle cx="0" cy="-6" r="15" fill="#a3b18a" />
+          </g>
+
+          <!-- Base Road Shadow (softer outer contour) -->
+          <path
+            d="M 50,440 C 180,455 260,455 360,455 C 540,455 660,245 840,245 C 1000,245 1100,435 1280,415 C 1370,405 1450,380 1540,370"
+            fill="none"
+            stroke="rgba(0, 0, 0, 0.07)"
+            stroke-width="44"
+            stroke-linecap="round"
+          />
+
+          <!-- Main Road Path: 36px thick, #3b2f2a at 90% opacity -->
+          <path
+            id="expRoadPathDesktop"
+            d="M 50,440 C 180,455 260,455 360,455 C 540,455 660,245 840,245 C 1000,245 1100,435 1280,415 C 1370,405 1450,380 1540,370"
+            fill="none"
+            stroke="rgba(59, 47, 42, 0.90)"
+            stroke-width="36"
+            stroke-linecap="round"
+          />
+
+          <!-- Dashed Centre Line: 14 16 -->
+          <path
+            d="M 50,440 C 180,455 260,455 360,455 C 540,455 660,245 840,245 C 1000,245 1100,435 1280,415 C 1370,405 1450,380 1540,370"
+            fill="none"
+            stroke="rgba(255, 255, 255, 0.72)"
+            stroke-width="3"
+            stroke-dasharray="14 16"
+            stroke-linecap="round"
+          />
+
+          <!-- Active Road Glow Line: stroke-dashoffset linked to scroll progress -->
+          <path
+            id="roadActivePathDesktop"
+            class="road-active-path"
+            d="M 50,440 C 180,455 260,455 360,455 C 540,455 660,245 840,245 C 1000,245 1100,435 1280,415 C 1370,405 1450,380 1540,370"
+            fill="none"
+            stroke="url(#roadGlowGrad)"
+            stroke-width="7"
+            stroke-linecap="round"
+            filter="url(#roadGlowFilter)"
+          />
+
+          <!-- Connector Lines from Stop Markers to Cards -->
+          <!-- Stop 1 connector line going up to Card 1 -->
+          <line x1="360" y1="455" x2="360" y2="400" stroke="#F97316" stroke-width="2" stroke-dasharray="4 4" opacity="0.6" />
+          <!-- Stop 2 connector line going down to Card 2 -->
+          <line x1="840" y1="245" x2="840" y2="305" stroke="#F97316" stroke-width="2" stroke-dasharray="4 4" opacity="0.6" />
+          <!-- Stop 3 connector line going up to Card 3 -->
+          <line x1="1280" y1="415" x2="1280" y2="365" stroke="#F97316" stroke-width="2" stroke-dasharray="4 4" opacity="0.6" />
+
+          <!-- Stop Markers: 18%, 52%, 86% of the road -->
+          <!-- Stop 1 Marker (18%) -->
+          <g class="exp-marker" id="expMarker1" transform="translate(360, 455)" role="button" aria-label="Stop 1: Data Science Intern">
+            <circle class="exp-marker__pulse" r="22" fill="url(#markerPulseGrad)" />
+            <circle class="exp-marker__base" r="22" fill="#ffffff" stroke="#F97316" stroke-width="5" />
+            <text class="exp-marker__num" text-anchor="middle" dominant-baseline="central" font-family="'Fraunces', Georgia, serif" font-weight="600" font-size="16" fill="#1a1a1a">1</text>
+            <text class="exp-marker__date" text-anchor="middle" y="44" font-family="'Inter', sans-serif" font-weight="600" font-size="12" fill="#666666">May 2024</text>
+          </g>
+
+          <!-- Stop 2 Marker (52%) -->
+          <g class="exp-marker" id="expMarker2" transform="translate(840, 245)" role="button" aria-label="Stop 2: Research Intern">
+            <circle class="exp-marker__pulse" r="22" fill="url(#markerPulseGrad)" />
+            <circle class="exp-marker__base" r="22" fill="#ffffff" stroke="#F97316" stroke-width="5" />
+            <text class="exp-marker__num" text-anchor="middle" dominant-baseline="central" font-family="'Fraunces', Georgia, serif" font-weight="600" font-size="16" fill="#1a1a1a">2</text>
+            <text class="exp-marker__date" text-anchor="middle" y="-36" font-family="'Inter', sans-serif" font-weight="600" font-size="12" fill="#666666">Dec 2025</text>
+          </g>
+
+          <!-- Stop 3 Marker (86%) -->
+          <g class="exp-marker" id="expMarker3" transform="translate(1280, 415)" role="button" aria-label="Stop 3: Data Analyst">
+            <circle class="exp-marker__pulse" r="22" fill="url(#markerPulseGrad)" />
+            <circle class="exp-marker__base" r="22" fill="#ffffff" stroke="#F97316" stroke-width="5" />
+            <text class="exp-marker__num" text-anchor="middle" dominant-baseline="central" font-family="'Fraunces', Georgia, serif" font-weight="600" font-size="16" fill="#1a1a1a">3</text>
+            <text class="exp-marker__date" text-anchor="middle" y="44" font-family="'Inter', sans-serif" font-weight="600" font-size="12" fill="#666666">Sep 2026</text>
+          </g>
+
+          <!-- End Finish Flag & "The journey continues..." -->
+          <g transform="translate(1520, 315)">
+            <line x1="0" y1="0" x2="0" y2="55" stroke="#1a1a1a" stroke-width="3" stroke-linecap="round"/>
+            <polygon points="0,0 24,9 0,18" fill="#F97316"/>
+            <text x="-6" y="-12" text-anchor="middle" font-family="'Fraunces', Georgia, serif" font-style="italic" font-size="15" font-weight="400" fill="#F97316">The journey continues...</text>
+          </g>
+
+          <!-- CYCLIST (Inline SVG illustration, 110px wide, placed directly on the road)
+               Everything below lives in ONE local coordinate system: rear hub (22,48), front hub (88,48),
+               bottom bracket / crank centre (52,48), hip (45,27). The whole group is moved + tilted along
+               the road by a single transform; wheels, cranks, pedals and legs are updated by JS
+               (see "setCrank" and the wheel rotation in the EXPERIENCE SCRIPT). -->
+          <g id="cyclistG" role="img" aria-label="Cyclist riding along my career roadmap" transform="translate(0, 390)">
+            <!-- Ground shadow ellipse -->
+            <ellipse cx="55" cy="66" rx="42" ry="3.5" fill="rgba(0,0,0,0.22)" />
+
+            <!-- Rear Wheel: spun around its own hub (22, 48) by JS -->
+            <g id="cyclistRearWheel" class="exp-wheel">
+              <circle cx="22" cy="48" r="18" fill="none" stroke="#222222" stroke-width="3.5"/>
+              <circle cx="22" cy="48" r="16.5" fill="none" stroke="#e2e8f0" stroke-width="1.2"/>
+              <circle cx="22" cy="48" r="3.5" fill="#F97316"/>
+              <line x1="4" y1="48" x2="40" y2="48" stroke="#cbd5e1" stroke-width="1"/>
+              <line x1="22" y1="30" x2="22" y2="66" stroke="#cbd5e1" stroke-width="1"/>
+              <line x1="9" y1="35" x2="35" y2="61" stroke="#cbd5e1" stroke-width="1"/>
+              <line x1="9" y1="61" x2="35" y2="35" stroke="#cbd5e1" stroke-width="1"/>
+            </g>
+
+            <!-- Front Wheel: spun around its own hub (88, 48) by JS -->
+            <g id="cyclistFrontWheel" class="exp-wheel">
+              <circle cx="88" cy="48" r="18" fill="none" stroke="#222222" stroke-width="3.5"/>
+              <circle cx="88" cy="48" r="16.5" fill="none" stroke="#e2e8f0" stroke-width="1.2"/>
+              <circle cx="88" cy="48" r="3.5" fill="#F97316"/>
+              <line x1="70" y1="48" x2="106" y2="48" stroke="#cbd5e1" stroke-width="1"/>
+              <line x1="88" y1="30" x2="88" y2="66" stroke="#cbd5e1" stroke-width="1"/>
+              <line x1="75" y1="35" x2="101" y2="61" stroke="#cbd5e1" stroke-width="1"/>
+              <line x1="75" y1="61" x2="101" y2="35" stroke="#cbd5e1" stroke-width="1"/>
+            </g>
+
+            <!-- FAR side (behind the frame): far crank arm, far pedal, far leg -->
+            <line id="cyclistCrankFar" x1="52" y1="48" x2="52" y2="48" stroke="#555555" stroke-width="2" stroke-linecap="round"/>
+            <path id="cyclistLegFar" d="M45 27 L55 38 L52 48" fill="none" stroke="#5a5a5a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            <line id="cyclistFootFar" x1="50" y1="48" x2="56" y2="48" stroke="#9a4a10" stroke-width="3" stroke-linecap="round"/>
+            <rect id="cyclistPedalFar" x="-2.5" y="-1" width="5" height="2" rx="1" fill="#111111" transform="translate(52 48)"/>
+
+            <!-- Bike Frame & Saddle -->
+            <path d="M 37 27 Q 44 25 52 27 Q 46 29 37 27 Z" fill="#1a1a1a"/>
+            <!-- Chainstay & Seatstay -->
+            <line x1="22" y1="48" x2="52" y2="48" stroke="#1a1a1a" stroke-width="2.5"/>
+            <line x1="22" y1="48" x2="44" y2="28" stroke="#1a1a1a" stroke-width="2.5"/>
+            <!-- Down tube & Top tube (Orange) -->
+            <line x1="52" y1="48" x2="74" y2="23" stroke="#F97316" stroke-width="3" stroke-linecap="round"/>
+            <line x1="44" y1="28" x2="74" y2="23" stroke="#F97316" stroke-width="3" stroke-linecap="round"/>
+            <line x1="52" y1="48" x2="44" y2="28" stroke="#1a1a1a" stroke-width="2.5"/>
+            <!-- Fork -->
+            <line x1="74" y1="20" x2="88" y2="48" stroke="#1a1a1a" stroke-width="2.5"/>
+            <!-- Handlebars -->
+            <path d="M 74 20 L 76 15 Q 81 14 80 19" fill="none" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/>
+
+            <!-- Chainring hub (fixed at the bottom bracket) -->
+            <circle cx="52" cy="48" r="4.5" fill="#333333"/>
+
+            <!-- Rider Body -->
+            <!-- Torso (Orange jacket) -->
+            <path d="M 43 27 Q 48 19 62 14 Q 67 17 64 22 L 48 30 Z" fill="#F97316"/>
+            <!-- Head & Helmet -->
+            <circle cx="68" cy="9" r="5.5" fill="#c68642"/>
+            <path d="M 63 8 Q 69 2 76 7 Q 73 11 63 9 Z" fill="#F97316"/>
+            <path d="M 72 7 L 76 8" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
+            <!-- Arm to handlebar -->
+            <path d="M 63 16 Q 71 18 78 16" fill="none" stroke="#F97316" stroke-width="4" stroke-linecap="round"/>
+            <circle cx="78" cy="16" r="2" fill="#c68642"/>
+
+            <!-- NEAR side (in front of the frame): near crank arm, near leg + foot, near pedal.
+                 Their coordinates are recalculated every frame so the foot always stays on the pedal. -->
+            <line id="cyclistCrankNear" x1="52" y1="48" x2="52" y2="48" stroke="#F97316" stroke-width="2" stroke-linecap="round"/>
+            <path id="cyclistLegNear" d="M45 27 L57 37 L50 51" fill="none" stroke="#1a1a1a" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <line id="cyclistFootNear" x1="48" y1="51" x2="55" y2="51" stroke="#F97316" stroke-width="3" stroke-linecap="round"/>
+            <rect id="cyclistPedalNear" x="-2.5" y="-1" width="5" height="2" rx="1" fill="#111111" transform="translate(52 48)"/>
+          </g>
+        </svg>
+
+        <!-- ================================================================
+             MOBILE ROAD SVG (viewBox 0 0 400 1200)
+             ================================================================ -->
+        <svg class="exp-road-svg exp-road-mobile" id="expRoadSvgMobile" viewBox="0 0 400 1200" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <!-- Road Base -->
+          <path
+            id="expRoadPathMobile"
+            d="M 200,80 C 130,150 110,210 130,280 C 160,390 280,490 270,630 C 260,780 120,860 140,990 C 150,1060 180,1110 200,1150"
+            fill="none"
+            stroke="rgba(59, 47, 42, 0.90)"
+            stroke-width="30"
+            stroke-linecap="round"
+          />
+          <!-- Dashed Centerline -->
+          <path
+            d="M 200,80 C 130,150 110,210 130,280 C 160,390 280,490 270,630 C 260,780 120,860 140,990 C 150,1060 180,1110 200,1150"
+            fill="none"
+            stroke="rgba(255, 255, 255, 0.7)"
+            stroke-width="2.5"
+            stroke-dasharray="12 14"
+            stroke-linecap="round"
+          />
+          <!-- Active Road Glow Mobile -->
+          <path
+            id="roadActivePathMobile"
+            class="road-active-path"
+            d="M 200,80 C 130,150 110,210 130,280 C 160,390 280,490 270,630 C 260,780 120,860 140,990 C 150,1060 180,1110 200,1150"
+            fill="none"
+            stroke="url(#roadGlowGrad)"
+            stroke-width="6"
+            stroke-linecap="round"
+          />
+
+          <!-- Mobile Stop Markers -->
+          <g class="exp-marker" id="expMarkerMobile1" transform="translate(130, 280)">
+            <circle class="exp-marker__base" r="18" fill="#ffffff" stroke="#F97316" stroke-width="4" />
+            <text class="exp-marker__num" text-anchor="middle" dominant-baseline="central" font-family="'Fraunces', serif" font-weight="600" font-size="14" fill="#1a1a1a">1</text>
+          </g>
+          <g class="exp-marker" id="expMarkerMobile2" transform="translate(270, 630)">
+            <circle class="exp-marker__base" r="18" fill="#ffffff" stroke="#F97316" stroke-width="4" />
+            <text class="exp-marker__num" text-anchor="middle" dominant-baseline="central" font-family="'Fraunces', serif" font-weight="600" font-size="14" fill="#1a1a1a">2</text>
+          </g>
+          <g class="exp-marker" id="expMarkerMobile3" transform="translate(140, 990)">
+            <circle class="exp-marker__base" r="18" fill="#ffffff" stroke="#F97316" stroke-width="4" />
+            <text class="exp-marker__num" text-anchor="middle" dominant-baseline="central" font-family="'Fraunces', serif" font-weight="600" font-size="14" fill="#1a1a1a">3</text>
+          </g>
+
+          <!-- Mobile Cyclist -->
+          <g id="cyclistMobileG" transform="translate(150, 70) scale(0.85)">
+            <circle cx="22" cy="48" r="16" fill="none" stroke="#222" stroke-width="3"/>
+            <circle cx="88" cy="48" r="16" fill="none" stroke="#222" stroke-width="3"/>
+            <line x1="22" y1="48" x2="74" y2="23" stroke="#F97316" stroke-width="3"/>
+            <line x1="52" y1="48" x2="88" y2="48" stroke="#1a1a1a" stroke-width="2.5"/>
+            <path d="M 43 27 Q 48 19 62 14 Q 67 17 64 22 L 48 30 Z" fill="#F97316"/>
+            <circle cx="68" cy="9" r="5" fill="#c68642"/>
+            <path d="M 63 8 Q 69 2 76 7 Q 73 11 63 9 Z" fill="#F97316"/>
+          </g>
+        </svg>
+
+        <!-- ================================================================
+             EXPERIENCE CARDS (Real HTML, positioned relative to scene)
+             ================================================================ -->
+
+        <!-- CARD 1: STOP 1 (Above Road) -->
+        <article class="exp-card exp-card--1" id="expCard1" aria-labelledby="cardTitle1">
+          <!-- Tag: INTERNSHIP -->
+          <div class="exp-card__tag">INTERNSHIP</div>
+          <!-- Title -->
+          <h3 class="exp-card__title" id="cardTitle1">Data Science Intern</h3>
+          <!-- Organisation -->
+          <div class="exp-card__org">Null Class</div>
+          <!-- Date -->
+          <div class="exp-card__date">May 2024 - Jun 2024</div>
+          <!-- Description -->
+          <p class="exp-card__desc">
+            Built three machine learning models during a two-month internship: a sign language detector, a traffic analysis model and a gender and age prediction model.
+          </p>
+          <!-- Chips -->
+          <div class="exp-card__chips">
+            <span class="exp-chip">Machine Learning</span>
+            <span class="exp-chip">Computer Vision</span>
+            <span class="exp-chip">Python</span>
+          </div>
+        </article>
+
+        <!-- CARD 2: STOP 2 (Below Road) -->
+        <article class="exp-card exp-card--2" id="expCard2" aria-labelledby="cardTitle2">
+          <!-- Tag: RESEARCH INTERNSHIP -->
+          <div class="exp-card__tag">RESEARCH INTERNSHIP</div>
+          <!-- Title -->
+          <h3 class="exp-card__title" id="cardTitle2">Research Intern</h3>
+          <!-- Organisation -->
+          <div class="exp-card__org">Indian Institute of Science Education and Research (IISER)</div>
+          <!-- Date -->
+          <div class="exp-card__date">Dec 2025 - Mar 2026</div>
+          <!-- Description -->
+          <p class="exp-card__desc">
+            Worked on proposing a model to secure networks in upcoming 6G devices, and developed an entropy-based simulation model to demonstrate network security.
+          </p>
+          <!-- Chips -->
+          <div class="exp-card__chips">
+            <span class="exp-chip">6G Security</span>
+            <span class="exp-chip">Entropy</span>
+            <span class="exp-chip">Simulation</span>
+          </div>
+        </article>
+
+        <!-- CARD 3: STOP 3 (Above Road) -->
+        <article class="exp-card exp-card--3" id="expCard3" aria-labelledby="cardTitle3">
+          <!-- Tag: CURRENT ROLE with pulsing green dot -->
+          <div class="exp-card__tag">
+            <span class="exp-card__green-dot" aria-hidden="true"></span>
+            CURRENT ROLE
+          </div>
+          <!-- Title -->
+          <h3 class="exp-card__title" id="cardTitle3">Data Analyst</h3>
+          <!-- Organisation -->
+          <div class="exp-card__org">Institute of Small Enterprises and Development (ISED)</div>
+          <!-- Date -->
+          <div class="exp-card__date">Sep 2026 - Present</div>
+          <!-- Description -->
+          <p class="exp-card__desc">
+            Currently developing a practical implementation of the ISED report &lsquo;MSME Report 2026&rsquo;, turning the report&rsquo;s findings into usable data work.
+          </p>
+          <!-- Chips -->
+          <div class="exp-card__chips">
+            <span class="exp-chip">Data Analysis</span>
+            <span class="exp-chip">Reporting</span>
+            <span class="exp-chip">MSME</span>
+          </div>
+        </article>
+
+      </div>
+
+      <!-- Scroll Hint at Bottom Centre -->
+      <div class="exp-scroll-hint" id="expScrollHint">
+        <span>Scroll to ride</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================================================================
+       SECTION 4: SELECTED PROJECTS (STACK-TO-ROW PINNED SCENE)
+       - 350vh scroll track
+       - Sticky 100vh inner viewport
+       - 5 cards stacked at center, splitting smoothly into a horizontal row
+       - Hovering/focusing enlarges card to center with orange glow
+       - Mobile deck fanning and tap-to-focus
+       ================================================================ -->
+  <section class="proj-section" id="projects" aria-label="Selected Projects">
+    <div class="proj-sticky">
+
+      <!-- Ambient glow -->
+      <div class="proj-glow" aria-hidden="true"></div>
+
+      <!-- Section Header (top-left) -->
+      <div class="proj-header">
+        <span class="proj-label">PROJECTS</span>
+        <h2 class="proj-heading">
+          <span class="proj-heading__selected">Selected</span>
+          <span class="proj-heading__work">Work</span>
+        </h2>
+      </div>
+
+      <!-- Project Cards Row Container -->
+      <div class="proj-row" id="projRow">
+
+        <!-- CARD 1 -->
+        <div class="proj-slot" data-index="0" tabindex="0" role="region" aria-label="Project 1: Animal Disease Detection Using BioBERT">
+          <div class="proj-card-scroll-wrap" id="projScrollWrap0">
+            <!-- CHANGE: Replace href with your specific project repository or demo URL -->
+            <a href="https://github.com/BincyManuel" target="_blank" rel="noopener noreferrer" class="proj-card-inner" id="projCardInner0">
+              <div class="proj-card-media">
+                <div class="proj-media-fallback" aria-hidden="true">
+                  <svg class="pv" viewBox="0 0 200 100" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                    <g><line class="pv-line" x1="30" y1="22" x2="80" y2="34"/><line class="pv-line" x1="80" y1="34" x2="130" y2="18"/><line class="pv-line" x1="130" y1="18" x2="172" y2="32"/><line class="pv-line" x1="80" y1="34" x2="110" y2="52"/>
+                    <circle class="pv-node" cx="30" cy="22" r="3.2"/><circle class="pv-node" style="animation-delay:.4s" cx="80" cy="34" r="3.2"/><circle class="pv-node" style="animation-delay:.8s" cx="130" cy="18" r="3.2"/><circle class="pv-node" style="animation-delay:1.2s" cx="172" cy="32" r="3.2"/><circle class="pv-node" style="animation-delay:1.6s" cx="110" cy="52" r="3.2"/></g>
+                    <path class="pv-ecg" pathLength="1" d="M0 78 H34 l6 -16 l8 30 l7 -24 l5 10 H104 l6 -14 l8 26 l7 -20 H200"/>
+                  </svg>
+                </div>
+                <!-- CHANGE: drop a screen recording at videos/project1.mp4 (muted, loops) and/or a screenshot at
+                     images/project1.jpg to replace the animated preview. If a file is missing the animation stays. -->
+                <video class="proj-card-video" src="videos/project1.mp4" muted loop playsinline autoplay preload="metadata" onerror="this.remove()"></video>
+                <img src="images/project1.jpg" alt="Animal Disease Detection Using BioBERT preview" class="proj-card-img" onerror="this.classList.add('is-missing')" />
+                <span class="proj-card-watermark" aria-hidden="true">01</span>
+              </div>
+              <div class="proj-card-body">
+                <span class="proj-card-tag">PUBLISHED &middot; ICAIBT 2025</span>
+                <h3 class="proj-card-title">Animal Disease Detection Using BioBERT</h3>
+                <p class="proj-card-desc">
+                  A deep learning and NLP model that predicts diseases in animals, built to support animal healthcare. Published at ICAIBT 2025.
+                </p>
+                <div class="proj-card-chips">
+                  <span class="proj-chip">Deep Learning</span>
+                  <span class="proj-chip">NLP</span>
+                  <span class="proj-chip">BioBERT</span>
+                </div>
+                <div class="proj-card-footer">
+                  <span>View on GitHub</span>
+                  <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="4" y1="12" x2="12" y2="4"></line>
+                    <polyline points="5 4 12 4 12 11"></polyline>
+                  </svg>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- CARD 2 -->
+        <div class="proj-slot" data-index="1" tabindex="0" role="region" aria-label="Project 2: RAG-Based Customer Support Chatbot">
+          <div class="proj-card-scroll-wrap" id="projScrollWrap1">
+            <!-- CHANGE: Replace href with your specific project repository or demo URL -->
+            <a href="https://github.com/BincyManuel" target="_blank" rel="noopener noreferrer" class="proj-card-inner" id="projCardInner1">
+              <div class="proj-card-media">
+                <div class="proj-media-fallback" aria-hidden="true">
+                  <svg class="pv" viewBox="0 0 200 100" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                    <g class="pv-bub"><rect x="14" y="10" width="92" height="20" rx="10" fill="#fff" stroke="rgba(249,115,22,.35)"/><rect x="24" y="17" width="54" height="3" rx="1.5" fill="#d6d3d1"/><rect x="24" y="23" width="36" height="3" rx="1.5" fill="#e7e5e4"/></g>
+                    <g class="pv-bub r" style="animation-delay:1.3s"><rect x="92" y="38" width="94" height="22" rx="11" fill="#F97316"/><rect x="104" y="45" width="60" height="3" rx="1.5" fill="#fff" opacity=".9"/><rect x="104" y="51" width="44" height="3" rx="1.5" fill="#fff" opacity=".6"/></g>
+                    <g class="pv-bub" style="animation-delay:2.6s"><rect x="14" y="68" width="48" height="20" rx="10" fill="#fff" stroke="rgba(249,115,22,.35)"/><circle class="pv-dot" cx="29" cy="78" r="2.2"/><circle class="pv-dot" style="animation-delay:.2s" cx="38" cy="78" r="2.2"/><circle class="pv-dot" style="animation-delay:.4s" cx="47" cy="78" r="2.2"/></g>
+                  </svg>
+                </div>
+                <!-- CHANGE: drop a screen recording at videos/project2.mp4 (muted, loops) and/or a screenshot at
+                     images/project2.jpg to replace the animated preview. If a file is missing the animation stays. -->
+                <video class="proj-card-video" src="videos/project2.mp4" muted loop playsinline autoplay preload="metadata" onerror="this.remove()"></video>
+                <img src="images/project2.jpg" alt="RAG-Based Customer Support Chatbot preview" class="proj-card-img" onerror="this.classList.add('is-missing')" />
+                <span class="proj-card-watermark" aria-hidden="true">02</span>
+              </div>
+              <div class="proj-card-body">
+                <span class="proj-card-tag">LLM APPLICATION</span>
+                <h3 class="proj-card-title">RAG-Based Customer Support Chatbot</h3>
+                <p class="proj-card-desc">
+                  A retrieval-augmented chatbot that answers customer support FAQs using a vector database and LLMs.
+                </p>
+                <div class="proj-card-chips">
+                  <span class="proj-chip">LLMs</span>
+                  <span class="proj-chip">LangChain</span>
+                  <span class="proj-chip">Vector DB</span>
+                </div>
+                <div class="proj-card-footer">
+                  <span>View on GitHub</span>
+                  <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="4" y1="12" x2="12" y2="4"></line>
+                    <polyline points="5 4 12 4 12 11"></polyline>
+                  </svg>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- CARD 3 -->
+        <div class="proj-slot" data-index="2" tabindex="0" role="region" aria-label="Project 3: Adaptive Edge Security for 6G">
+          <div class="proj-card-scroll-wrap" id="projScrollWrap2">
+            <!-- CHANGE: Replace href with your specific project repository or demo URL -->
+            <a href="https://github.com/BincyManuel" target="_blank" rel="noopener noreferrer" class="proj-card-inner" id="projCardInner2">
+              <div class="proj-card-media">
+                <div class="proj-media-fallback" aria-hidden="true">
+                  <svg class="pv" viewBox="0 0 200 100" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                    <g class="pv-spin"><circle cx="100" cy="50" r="34" fill="none" stroke="#F97316" stroke-opacity=".4" stroke-dasharray="3 5"/>
+                      <circle class="pv-node" cx="100" cy="16" r="3.4"/><circle class="pv-node" style="animation-delay:.5s" cx="134" cy="50" r="3.4"/><circle class="pv-node" style="animation-delay:1s" cx="100" cy="84" r="3.4"/><circle class="pv-node" style="animation-delay:1.5s" cx="66" cy="50" r="3.4"/></g>
+                    <g class="pv-sweep"><path d="M100 50 L100 14 A36 36 0 0 1 128 27 Z" fill="#F97316" fill-opacity=".18"/></g>
+                    <path class="pv-shield" d="M100 36 l13 5 v10 c0 8 -6 13 -13 16 c-7 -3 -13 -8 -13 -16 v-10 z" fill="#F97316"/>
+                    <path d="M94 51 l5 5 l8 -10" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <!-- CHANGE: drop a screen recording at videos/project3.mp4 (muted, loops) and/or a screenshot at
+                     images/project3.jpg to replace the animated preview. If a file is missing the animation stays. -->
+                <video class="proj-card-video" src="videos/project3.mp4" muted loop playsinline autoplay preload="metadata" onerror="this.remove()"></video>
+                <img src="images/project3.jpg" alt="Adaptive Edge Security for 6G preview" class="proj-card-img" onerror="this.classList.add('is-missing')" />
+                <span class="proj-card-watermark" aria-hidden="true">03</span>
+              </div>
+              <div class="proj-card-body">
+                <span class="proj-card-tag">6G SECURITY</span>
+                <h3 class="proj-card-title">Adaptive Edge Security for 6G</h3>
+                <p class="proj-card-desc">
+                  AI-driven monitoring workflows for anomaly detection and adaptive threat analysis in 6G networks.
+                </p>
+                <div class="proj-card-chips">
+                  <span class="proj-chip">Python</span>
+                  <span class="proj-chip">Machine Learning</span>
+                  <span class="proj-chip">Anomaly Detection</span>
+                </div>
+                <div class="proj-card-footer">
+                  <span>View on GitHub</span>
+                  <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="4" y1="12" x2="12" y2="4"></line>
+                    <polyline points="5 4 12 4 12 11"></polyline>
+                  </svg>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- CARD 4 -->
+        <div class="proj-slot" data-index="3" tabindex="0" role="region" aria-label="Project 4: Road Traffic Monitoring System">
+          <div class="proj-card-scroll-wrap" id="projScrollWrap3">
+            <!-- CHANGE: Replace href with your specific project repository or demo URL -->
+            <a href="https://github.com/BincyManuel" target="_blank" rel="noopener noreferrer" class="proj-card-inner" id="projCardInner3">
+              <div class="proj-card-media">
+                <div class="proj-media-fallback" aria-hidden="true">
+                  <svg class="pv" viewBox="0 0 200 100" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                    <rect x="0" y="30" width="200" height="56" fill="rgba(60,50,45,.78)"/>
+                    <line class="pv-lane" x1="0" y1="58" x2="200" y2="58"/>
+                    <g class="pv-car" style="animation-duration:5s"><rect x="0" y="38" width="30" height="14" rx="4" fill="#F97316"/><rect x="-3" y="35" width="36" height="20" rx="3" fill="none" stroke="#FBBF24" stroke-width="1.4" stroke-dasharray="4 2"/></g>
+                    <g class="pv-car" style="animation-duration:7s;animation-delay:-3s"><rect x="0" y="64" width="26" height="14" rx="4" fill="#fff"/><rect x="-3" y="61" width="32" height="20" rx="3" fill="none" stroke="#FBBF24" stroke-width="1.4" stroke-dasharray="4 2"/></g>
+                    <g class="pv-car" style="animation-duration:9s;animation-delay:-6s"><rect x="0" y="40" width="20" height="10" rx="3" fill="#fde68a"/><rect x="-3" y="37" width="26" height="16" rx="3" fill="none" stroke="#FBBF24" stroke-width="1.4" stroke-dasharray="4 2"/></g>
+                  </svg>
+                </div>
+                <!-- CHANGE: drop a screen recording at videos/project4.mp4 (muted, loops) and/or a screenshot at
+                     images/project4.jpg to replace the animated preview. If a file is missing the animation stays. -->
+                <video class="proj-card-video" src="videos/project4.mp4" muted loop playsinline autoplay preload="metadata" onerror="this.remove()"></video>
+                <img src="images/project4.jpg" alt="Road Traffic Monitoring System preview" class="proj-card-img" onerror="this.classList.add('is-missing')" />
+                <span class="proj-card-watermark" aria-hidden="true">04</span>
+              </div>
+              <div class="proj-card-body">
+                <span class="proj-card-tag">COMPUTER VISION</span>
+                <h3 class="proj-card-title">Road Traffic Monitoring System</h3>
+                <p class="proj-card-desc">
+                  Real-time vehicle and pedestrian analysis using image processing.
+                </p>
+                <div class="proj-card-chips">
+                  <span class="proj-chip">Computer Vision</span>
+                  <span class="proj-chip">Image Processing</span>
+                </div>
+                <div class="proj-card-footer">
+                  <span>View on GitHub</span>
+                  <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="4" y1="12" x2="12" y2="4"></line>
+                    <polyline points="5 4 12 4 12 11"></polyline>
+                  </svg>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- CARD 5 -->
+        <div class="proj-slot" data-index="4" tabindex="0" role="region" aria-label="Project 5: Time Table Generator">
+          <div class="proj-card-scroll-wrap" id="projScrollWrap4">
+            <!-- CHANGE: Replace href with your specific project repository or demo URL -->
+            <a href="https://github.com/BincyManuel" target="_blank" rel="noopener noreferrer" class="proj-card-inner" id="projCardInner4">
+              <div class="proj-card-media">
+                <div class="proj-media-fallback" aria-hidden="true">
+                  <svg class="pv" viewBox="0 0 200 100" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                    <g fill="#F97316">
+                      <rect class="pv-bar" x="14"  y="30" width="12" height="60" rx="3" style="animation-delay:0s"/>
+                      <rect class="pv-bar" x="32"  y="30" width="12" height="60" rx="3" style="animation-delay:.25s;opacity:.85"/>
+                      <rect class="pv-bar" x="50"  y="30" width="12" height="60" rx="3" style="animation-delay:.5s"/>
+                      <rect class="pv-bar" x="68"  y="30" width="12" height="60" rx="3" style="animation-delay:.75s;opacity:.85"/>
+                      <rect class="pv-bar" x="86"  y="30" width="12" height="60" rx="3" style="animation-delay:1s"/>
+                      <rect class="pv-bar" x="104" y="30" width="12" height="60" rx="3" style="animation-delay:1.25s;opacity:.85"/>
+                      <rect class="pv-bar" x="122" y="30" width="12" height="60" rx="3" style="animation-delay:1.5s"/>
+                      <rect class="pv-bar" x="140" y="30" width="12" height="60" rx="3" style="animation-delay:1.75s;opacity:.85"/>
+                      <rect class="pv-bar" x="158" y="30" width="12" height="60" rx="3" style="animation-delay:2s"/>
+                      <rect class="pv-bar" x="176" y="30" width="12" height="60" rx="3" style="animation-delay:2.25s;opacity:.85"/>
+                    </g>
+                    <path class="pv-fit" pathLength="1" d="M8 80 C40 74 56 60 84 52 S140 28 192 14"/>
+                  </svg>
+                </div>
+                <!-- CHANGE: drop a screen recording at videos/project5.mp4 (muted, loops) and/or a screenshot at
+                     images/project5.jpg to replace the animated preview. If a file is missing the animation stays. -->
+                <video class="proj-card-video" src="videos/project5.mp4" muted loop playsinline autoplay preload="metadata" onerror="this.remove()"></video>
+                <img src="images/project5.jpg" alt="Time Table Generator preview" class="proj-card-img" onerror="this.classList.add('is-missing')" />
+                <span class="proj-card-watermark" aria-hidden="true">05</span>
+              </div>
+              <div class="proj-card-body">
+                <span class="proj-card-tag">PUBLISHED &middot; 2025</span>
+                <h3 class="proj-card-title">Time Table Generator</h3>
+                <p class="proj-card-desc">
+                  A scheduling and resource-allocation system built with genetic algorithms and constraint satisfaction. Published in 2025.
+                </p>
+                <div class="proj-card-chips">
+                  <span class="proj-chip">Genetic Algorithms</span>
+                  <span class="proj-chip">CSP</span>
+                </div>
+                <div class="proj-card-footer">
+                  <span>View on GitHub</span>
+                  <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="4" y1="12" x2="12" y2="4"></line>
+                    <polyline points="5 4 12 4 12 11"></polyline>
+                  </svg>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Scroll Hint at Bottom Centre -->
+      <div class="proj-scroll-hint" id="projScrollHint">
+        <span>Scroll to explore projects</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================================================================
+       SECTION 5: LET'S CONNECT (CONTACT & FOOTER)
+       - Two-column layout: Left details & actions, Right message form card
+       - Floating ambient background orbs
+       - Staggered entrance animation
+       - Accessible form with live character count, honeypot, and prefilled mailto fallback
+       - Small footer with dynamic year, attribution, and smooth back-to-top button
+       ================================================================ -->
+  <section class="contact-section" id="contact" aria-label="Contact and Let's Connect">
+
+    <!-- Decorative floating background orbs -->
+    <div class="contact-bg-orb contact-bg-orb--1" aria-hidden="true"></div>
+    <div class="contact-bg-orb contact-bg-orb--2" aria-hidden="true"></div>
+    <div class="contact-bg-orb contact-bg-orb--3" aria-hidden="true"></div>
+
+    <div class="contact-container">
+
+      <!-- LEFT COLUMN: Contact Details & Identity -->
+      <div class="contact-left">
+        <!-- Label & Heading -->
+        <div class="contact-anim-item">
+          <span class="contact-label">CONTACT</span>
+          <h2 class="contact-heading">
+            <span class="contact-heading__lets">Let's</span>
+            <span class="contact-heading__connect">Connect<span class="contact-heading__dot">.</span></span>
+          </h2>
+        </div>
+
+        <p class="contact-subline contact-anim-item">Have a project or an opportunity in mind? Let's talk.</p>
+
+        <!-- Status badge with pulsing green dot -->
+        <div class="contact-status-badge contact-anim-item">
+          <span class="contact-pulse-dot" aria-hidden="true"></span>
+          <span>Open to new opportunities</span>
+        </div>
+
+        <!-- Contact detail rows -->
+        <div class="contact-details-list">
+
+          <!-- Email Row -->
+          <!-- CHANGE: Replace email address below if needed -->
+          <div class="contact-detail-row contact-anim-item">
+            <div class="contact-icon-circle" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="4" width="20" height="16" rx="3"></rect>
+                <path d="M22 7l-10 7L2 7"></path>
+              </svg>
+            </div>
+            <div class="contact-detail-info">
+              <span class="contact-detail-label">Email</span>
+              <a href="mailto:bincymanuel085@gmail.com" class="contact-link" aria-label="Send email to bincymanuel085@gmail.com">bincymanuel085@gmail.com</a>
+            </div>
+          </div>
+
+          <!-- Location Row -->
+          <!-- CHANGE: Replace location text below if needed -->
+          <div class="contact-detail-row contact-anim-item">
+            <div class="contact-icon-circle" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+            </div>
+            <div class="contact-detail-info">
+              <span class="contact-detail-label">Location</span>
+              <span class="contact-val">Kochi, Kerala, India</span>
+            </div>
+          </div>
+
+          <!-- Response Time Row -->
+          <div class="contact-detail-row contact-anim-item">
+            <div class="contact-icon-circle" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+            </div>
+            <div class="contact-detail-info">
+              <span class="contact-detail-label">Response Time</span>
+              <span class="contact-val">Usually replies within 24 hours</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Social Buttons & Download Resume Row -->
+        <div class="contact-actions-row contact-anim-item">
+          <!-- LinkedIn -->
+          <!-- CHANGE: Replace LinkedIn link if needed -->
+          <a href="https://www.linkedin.com/in/bincy-manuel" target="_blank" rel="noopener noreferrer" class="contact-social-btn" aria-label="Visit Bincy Manuel on LinkedIn">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9h2.79v8.37H6.46v-8.37M7.86 6.54a1.63 1.63 0 1 0 0 3.26 1.63 1.63 0 0 0 0-3.26z"/>
+            </svg>
+          </a>
+
+          <!-- GitHub -->
+          <!-- CHANGE: Replace GitHub link if needed -->
+          <a href="https://github.com/BincyManuel" target="_blank" rel="noopener noreferrer" class="contact-social-btn" aria-label="Visit Bincy Manuel on GitHub">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.1-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z"/>
+            </svg>
+          </a>
+
+          <!-- Download Resume Button -->
+          <!-- CHANGE: Place your resume file at 'resume.pdf' or update href below -->
+          <a href="resume.pdf" download class="contact-resume-btn" aria-label="Download Bincy Manuel Resume PDF">
+            <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M3 13v3a2 2 0 002 2h10a2 2 0 002-2v-3M7 9l3 3 3-3M10 2v10"/>
+            </svg>
+            <span>Download Resume</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN: Message Box Form Card -->
+      <div class="contact-right">
+        <div class="contact-card contact-anim-card">
+
+          <!-- Header -->
+          <h3 class="contact-card-title">Send me a message</h3>
+          <p class="contact-card-subline">Fill in the form and I will get back to you soon.</p>
+
+          <!-- Form View -->
+          <form class="contact-form" id="contactForm" novalidate>
+
+            <!-- Honeypot Field (Blocks Bots, invisible to humans) -->
+            <input type="text" name="company" id="contactCompany" class="form-honeypot" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+            <!-- Field 1: Name -->
+            <div class="form-group contact-anim-field" id="groupName">
+              <label for="contactName" class="form-label">Name <span class="form-required" aria-hidden="true">*</span></label>
+              <input type="text" id="contactName" name="name" class="form-input" placeholder="Your full name" required autocomplete="name" />
+              <span class="form-error" id="nameError" role="alert">Please enter your name</span>
+            </div>
+
+            <!-- Field 2: Email -->
+            <div class="form-group contact-anim-field" id="groupEmail">
+              <label for="contactEmail" class="form-label">Email <span class="form-required" aria-hidden="true">*</span></label>
+              <input type="email" id="contactEmail" name="email" class="form-input" placeholder="you@example.com" required autocomplete="email" />
+              <span class="form-error" id="emailError" role="alert">Please enter a valid email address</span>
+            </div>
+
+            <!-- Field 3: Subject -->
+            <div class="form-group contact-anim-field" id="groupSubject">
+              <label for="contactSubject" class="form-label">Subject <span class="form-required" aria-hidden="true">*</span></label>
+              <input type="text" id="contactSubject" name="subject" class="form-input" placeholder="Project inquiry, collaboration, etc." required />
+              <span class="form-error" id="subjectError" role="alert">Please enter a subject</span>
+            </div>
+
+            <!-- Field 4: Message -->
+            <div class="form-group contact-anim-field" id="groupMessage">
+              <div class="form-label-row">
+                <label for="contactMessage" class="form-label">Message <span class="form-required" aria-hidden="true">*</span></label>
+                <span class="form-char-counter" id="messageCharCounter" aria-live="polite">0 / 500</span>
+              </div>
+              <textarea id="contactMessage" name="message" class="form-input form-textarea" rows="5" maxlength="500" placeholder="Tell me about your project, dataset, or idea..." required></textarea>
+              <span class="form-error" id="messageError" role="alert">Please enter your message</span>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="contact-anim-field">
+              <button type="submit" id="contactSubmitBtn" class="form-submit-btn" aria-label="Send Message">
+                <span class="submit-btn-content">
+                  <span class="submit-btn-text">Send Message</span>
+                  <svg class="submit-btn-icon" viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M18 2L9 11M18 2l-7 16-2-7-7-2 16-7z"/>
+                  </svg>
+                </span>
+                <span class="submit-btn-spinner" aria-hidden="true"></span>
+              </button>
+            </div>
+
+            <!-- Fallback Banner (shows if submission fails or placeholder endpoint is active) -->
+            <div class="form-fallback-banner" id="formFallbackBanner" role="region" aria-live="polite" style="display: none;">
+              <p class="fallback-banner-text">Could not send right now. Please email me directly at <a href="mailto:bincymanuel085@gmail.com" class="fallback-email-link">bincymanuel085@gmail.com</a></p>
+              <a href="mailto:bincymanuel085@gmail.com" id="formDirectMailtoBtn" class="fallback-mailto-btn">Open Prefilled Email</a>
+            </div>
+
+          </form>
+
+          <!-- Success State View (replaces form upon successful send) -->
+          <div class="form-success-state" id="formSuccessState" style="display: none;" role="region" aria-live="polite">
+            <div class="success-icon-wrap">
+              <svg viewBox="0 0 64 64" class="success-check-svg" aria-hidden="true">
+                <circle class="success-circle" cx="32" cy="32" r="28" fill="none" stroke="#F97316" stroke-width="4"/>
+                <path class="success-check" d="M19 32.5l9 9 17-17" fill="none" stroke="#F97316" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h3 class="success-title">Thank you!</h3>
+            <p class="success-desc">Your message has been sent. I will get back to you soon.</p>
+            <button type="button" id="formResetBtn" class="success-reset-btn">Send another message</button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- FOOTER COMPONENT -->
+    <footer class="contact-footer" role="contentinfo">
+      <div class="footer-divider" aria-hidden="true"></div>
+      <div class="footer-inner">
+        <div class="footer-col footer-col--left">
+          <p class="footer-copy">&copy; <span id="currentYear">2026</span> Bincy Manuel. All rights reserved.</p>
+        </div>
+        <div class="footer-col footer-col--centre">
+          <p class="footer-built">Designed and built with care in Kochi, Kerala</p>
+        </div>
+        <div class="footer-col footer-col--right">
+          <button type="button" id="backToTopBtn" class="footer-back-to-top" aria-label="Back to top of page">
+            <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="15 12 10 7 5 12"></polyline>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </footer>
+
+  </section>
+
+  <!-- ================================================================
+       HERO SCRIPT — mouse-parallax on hero photo
+       ================================================================ -->
+  <script>
+    (function () {
+      'use strict';
+
+      // Skip on reduced-motion or touch-only devices
+      if (
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+        !window.matchMedia('(hover: hover)').matches
+      ) return;
+
+      var wrap = document.querySelector('.photo-wrap');
+      if (!wrap) return;
+
+      var raf, mx = 0, my = 0, cx = 0, cy = 0;
+      var STRENGTH  = 14;        // pixels of max parallax movement
+      var READY_AT  = 5400;      // ms: after last animation ends (reduced timing)
+
+      window.addEventListener('mousemove', function (e) {
+        mx = (e.clientX / window.innerWidth  - 0.5) * 2;
+        my = (e.clientY / window.innerHeight - 0.5) * 2;
+      }, { passive: true });
+
+      function tick () {
+        cx += (mx - cx) * 0.055;
+        cy += (my - cy) * 0.055;
+
+        if (performance.now() > READY_AT) {
+          var tx = (cx * STRENGTH).toFixed(2);
+          var ty = (cy * STRENGTH).toFixed(2);
+          // Keep the horizontal centring translateX(-50%) intact
+          wrap.style.transform =
+            'translateX(calc(-50% + ' + tx + 'px)) translateY(' + ty + 'px)';
+        }
+
+        raf = requestAnimationFrame(tick);
+      }
+
+      window.addEventListener('load', function () {
+        raf = requestAnimationFrame(tick);
+      });
+
+      // Pause when tab is hidden (battery / perf)
+      document.addEventListener('visibilitychange', function () {
+        if (document.hidden) {
+          cancelAnimationFrame(raf);
+        } else {
+          raf = requestAnimationFrame(tick);
+        }
+      });
+    }());
+  </script>
+
+  <!-- ================================================================
+       ABOUT ME SCRIPT: fade-in on scroll + "Let's work together" button
+       ================================================================ -->
+  <script>
+    (function () {
+      'use strict';
+      var sec = document.getElementById('about');
+      if (!sec) return;
+      if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (en) {
+          if (en[0].isIntersecting) { sec.classList.add('is-in'); io.disconnect(); }
+        }, { threshold: 0.2 });
+        io.observe(sec);
+      } else { sec.classList.add('is-in'); }
+      // Shine follows the cursor over the cursive heading
+      var script = document.getElementById('a5Script');
+      if (script) {
+        script.addEventListener('pointermove', function (e) {
+          var r = script.getBoundingClientRect();
+          script.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+          script.style.setProperty('--my', (e.clientY - r.top) + 'px');
+        });
+        script.addEventListener('pointerleave', function () {
+          script.style.setProperty('--mx', '-300px'); script.style.setProperty('--my', '-300px');
+        });
+      }
+
+      var talk = document.getElementById('aboutTalk');
+      if (talk) talk.addEventListener('click', function () {
+        var c = document.getElementById('contact');
+        if (c) window.scrollTo({ top: c.getBoundingClientRect().top + (window.pageYOffset || 0), behavior: 'smooth' });
+      });
+    }());
+  </script>
+
+  <!-- ================================================================
+       EXPERIENCE SCRIPT: SCROLL-DRIVEN CYCLIST ROADMAP ENGINE
+       - Progress = clamp((scrollY - wrapperTop) / (wrapperHeight - innerHeight), 0, 1)
+       - Lerp smoothing (0.12)
+       - Easing dwell at 18%, 52%, 86% stops
+       - Wheels spin, cyclist tilts along slope (+/-20 deg)
+       - Cards reveal & stay visible once reached
+       - Reversible upon scrolling backwards
+       ================================================================ -->
+  <script>
+    (function () {
+      'use strict';
+
+      var wrapper = document.getElementById('experience');
+      var scene   = document.getElementById('expScene');
+      if (!wrapper || !scene) return;
+
+      var desktopPath = document.getElementById('expRoadPathDesktop');
+      var mobilePath  = document.getElementById('expRoadPathMobile');
+
+      var desktopActive = document.getElementById('roadActivePathDesktop');
+      var mobileActive  = document.getElementById('roadActivePathMobile');
+
+      var cyclistG       = document.getElementById('cyclistG');
+      var cyclistMobileG = document.getElementById('cyclistMobileG');
+
+      var rearWheel = document.getElementById('cyclistRearWheel');
+      var frontWheel = document.getElementById('cyclistFrontWheel');
+      // Pedal / leg parts (all inside the cyclist group, in the bike's own coordinates)
+      var crankNear = document.getElementById('cyclistCrankNear');
+      var crankFar  = document.getElementById('cyclistCrankFar');
+      var pedalNear = document.getElementById('cyclistPedalNear');
+      var pedalFar  = document.getElementById('cyclistPedalFar');
+      var legNear   = document.getElementById('cyclistLegNear');
+      var legFar    = document.getElementById('cyclistLegFar');
+      var footNear  = document.getElementById('cyclistFootNear');
+      var footFar   = document.getElementById('cyclistFootFar');
+
+      // Fixed geometry of the bike (bike-local units)
+      var BB_X = 52, BB_Y = 48;      // bottom bracket (crank centre)
+      var HIP_X = 45, HIP_Y = 27;    // rider's hip on the saddle
+      var CRANK_LEN = 9;             // crank arm length
+      var THIGH = 17, SHIN = 17;     // leg bone lengths
+
+      // Two-bone leg IK: the knee is placed so thigh + shin exactly reach the pedal.
+      function legPath(px, py) {
+        var dx = px - HIP_X, dy = py - HIP_Y;
+        var d = Math.sqrt(dx * dx + dy * dy);
+        d = Math.min(d, THIGH + SHIN - 0.01);
+        var ux = dx / d, uy = dy / d;
+        var a = (THIGH * THIGH - SHIN * SHIN + d * d) / (2 * d);
+        var h = Math.sqrt(Math.max(0, THIGH * THIGH - a * a));
+        // knee bends towards the front of the bike (+x)
+        var kx = HIP_X + a * ux + h * uy;
+        var ky = HIP_Y + a * uy - h * ux;
+        return 'M' + HIP_X + ' ' + HIP_Y + ' L' + kx.toFixed(2) + ' ' + ky.toFixed(2) + ' L' + px.toFixed(2) + ' ' + (py - 1).toFixed(2);
+      }
+
+      // angleDeg = crank angle (clockwise, same direction as the wheels when riding right)
+      function setCrank(angleDeg) {
+        var t = angleDeg * Math.PI / 180;
+        var nx = BB_X + CRANK_LEN * Math.cos(t),           ny = BB_Y + CRANK_LEN * Math.sin(t);
+        var fx = BB_X + CRANK_LEN * Math.cos(t + Math.PI), fy = BB_Y + CRANK_LEN * Math.sin(t + Math.PI);
+        if (crankNear) { crankNear.setAttribute('x2', nx.toFixed(2)); crankNear.setAttribute('y2', ny.toFixed(2)); }
+        if (crankFar)  { crankFar.setAttribute('x2',  fx.toFixed(2)); crankFar.setAttribute('y2',  fy.toFixed(2)); }
+        // pedals stay level (translate only, never rotate)
+        if (pedalNear) pedalNear.setAttribute('transform', 'translate(' + nx.toFixed(2) + ' ' + ny.toFixed(2) + ')');
+        if (pedalFar)  pedalFar.setAttribute('transform',  'translate(' + fx.toFixed(2) + ' ' + fy.toFixed(2) + ')');
+        if (legNear)  legNear.setAttribute('d', legPath(nx, ny));
+        if (legFar)   legFar.setAttribute('d',  legPath(fx, fy));
+        if (footNear) { footNear.setAttribute('x1', (nx - 2.5).toFixed(2)); footNear.setAttribute('x2', (nx + 4.5).toFixed(2)); footNear.setAttribute('y1', (ny - 0.5).toFixed(2)); footNear.setAttribute('y2', (ny - 0.5).toFixed(2)); }
+        if (footFar)  { footFar.setAttribute('x1',  (fx - 2.5).toFixed(2)); footFar.setAttribute('x2',  (fx + 4.5).toFixed(2)); footFar.setAttribute('y1',  (fy - 0.5).toFixed(2)); footFar.setAttribute('y2',  (fy - 0.5).toFixed(2)); }
+      }
+      setCrank(35); // sensible starting pose (also used when reduced motion is on)
+
+      var card1 = document.getElementById('expCard1');
+      var card2 = document.getElementById('expCard2');
+      var card3 = document.getElementById('expCard3');
+
+      var marker1 = document.getElementById('expMarker1');
+      var marker2 = document.getElementById('expMarker2');
+      var marker3 = document.getElementById('expMarker3');
+
+      var markerMobile1 = document.getElementById('expMarkerMobile1');
+      var markerMobile2 = document.getElementById('expMarkerMobile2');
+      var markerMobile3 = document.getElementById('expMarkerMobile3');
+
+      var hint = document.getElementById('expScrollHint');
+
+      // Accessibility / Reduced Motion Fallback:
+      // Show all 3 cards and stops statically, park cyclist at stop 3
+      var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+      if (prefersReduced.matches) {
+        [card1, card2, card3].forEach(function (c) { if (c) c.classList.add('is-reached'); });
+        [marker1, marker2, marker3, markerMobile1, markerMobile2, markerMobile3].forEach(function (m) {
+          if (m) m.classList.add('is-reached');
+        });
+        if (hint) hint.style.display = 'none';
+        return;
+      }
+
+      function clamp(val, min, max) {
+        return Math.max(min, Math.min(max, val));
+      }
+
+      // Easing dwell function:
+      // When progress is within +/- 4% of a stop (0.18, 0.52, 0.86), pauses cyclist on the stop
+      function applyDwell(p) {
+        var stops = [0.18, 0.52, 0.86];
+        var W = 0.04; // 4% dwell window
+        for (var i = 0; i < stops.length; i++) {
+          var s = stops[i];
+          if (Math.abs(p - s) <= W) {
+            var u = (p - s) / W; // -1 to 1
+            // Cubic flattening at the stop center
+            return s + Math.pow(u, 3) * W;
+          }
+        }
+        return p;
+      }
+
+      var targetProgress = 0;
+      var smoothProgress = 0;
+      var LERP_FACTOR = 0.12; // Smooth fluid ride
+
+      var isTicking = false;
+
+      function updateScrollTarget() {
+        var rect = wrapper.getBoundingClientRect();
+        var scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+        var wrapperTop = rect.top + scrollY;
+        var wrapperHeight = wrapper.offsetHeight;
+        var innerHeight = window.innerHeight;
+        var maxScroll = wrapperHeight - innerHeight;
+
+        if (maxScroll > 0) {
+          targetProgress = clamp((scrollY - wrapperTop) / maxScroll, 0, 1);
+        } else {
+          targetProgress = 0;
+        }
+
+        // Hide "Scroll to ride" hint after first scroll
+        if (targetProgress > 0.02 && hint) {
+          hint.classList.add('is-hidden');
+        } else if (targetProgress <= 0.01 && hint) {
+          hint.classList.remove('is-hidden');
+        }
+
+        if (!isTicking) {
+          isTicking = true;
+          requestAnimationFrame(renderLoop);
+        }
+      }
+
+      function renderLoop() {
+        // Lerp towards target
+        smoothProgress += (targetProgress - smoothProgress) * LERP_FACTOR;
+
+        var isMobile = window.innerWidth < 768;
+        var path = isMobile ? mobilePath : desktopPath;
+        var activePath = isMobile ? mobileActive : desktopActive;
+        var currentCyclist = isMobile ? cyclistMobileG : cyclistG;
+
+        if (path) {
+          var totalLength = path.getTotalLength();
+
+          // Apply easing dwell so cyclist pauses visually at each stop
+          var dwelledProg = applyDwell(smoothProgress);
+          var dist = dwelledProg * totalLength;
+
+          // Compute point on road
+          var pt = path.getPointAtLength(dist);
+
+          // Compute rotation angle from two nearby points on path
+          var p1 = path.getPointAtLength(Math.max(0, dist - 3));
+          var p2 = path.getPointAtLength(Math.min(totalLength, dist + 3));
+          var angle = Math.atan2(p2.y - p1.y, p2.x - p1.x) * (180 / Math.PI);
+
+          // Clamp tilt angle to +/- 20 degrees so rider never looks upside down
+          var clampedAngle = Math.max(-20, Math.min(20, angle));
+
+          // Move and orient the cyclist
+          if (currentCyclist) {
+            currentCyclist.setAttribute(
+              'transform',
+              'translate(' + (pt.x - 55) + ',' + (pt.y - 56) + ') rotate(' + clampedAngle + ', 55, 56)'
+            );
+          }
+
+          // Spin the wheels in proportion to distance travelled
+          // Wheel radius = 18px -> circumference ~ 113.1px
+          var wheelRot = (dist / (2 * Math.PI * 18)) * 360;
+          if (rearWheel)  rearWheel.setAttribute('transform', 'rotate(' + (wheelRot % 360) + ', 22, 48)');
+          if (frontWheel) frontWheel.setAttribute('transform', 'rotate(' + (wheelRot % 360) + ', 88, 48)');
+          setCrank(35 + wheelRot * 0.6);   // pedals turn with the wheels; legs follow via IK
+
+          // Update active glowing road line (stroke-dashoffset linked to progress)
+          if (activePath) {
+            activePath.style.strokeDasharray = totalLength;
+            activePath.style.strokeDashoffset = totalLength * (1 - dwelledProg);
+          }
+
+          // Stops logic:
+          // Stops at 18%, 52%, 86%. Reached when within 3% or past it.
+          var reached1 = dwelledProg >= (0.18 - 0.03);
+          var reached2 = dwelledProg >= (0.52 - 0.03);
+          var reached3 = dwelledProg >= (0.86 - 0.03);
+
+          // Toggle card & marker states
+          if (card1) {
+            if (reached1) card1.classList.add('is-reached');
+            else          card1.classList.remove('is-reached');
+          }
+          if (marker1) {
+            if (reached1) marker1.classList.add('is-reached');
+            else          marker1.classList.remove('is-reached');
+          }
+          if (markerMobile1) {
+            if (reached1) markerMobile1.classList.add('is-reached');
+            else          markerMobile1.classList.remove('is-reached');
+          }
+
+          if (card2) {
+            if (reached2) card2.classList.add('is-reached');
+            else          card2.classList.remove('is-reached');
+          }
+          if (marker2) {
+            if (reached2) marker2.classList.add('is-reached');
+            else          marker2.classList.remove('is-reached');
+          }
+          if (markerMobile2) {
+            if (reached2) markerMobile2.classList.add('is-reached');
+            else          markerMobile2.classList.remove('is-reached');
+          }
+
+          if (card3) {
+            if (reached3) card3.classList.add('is-reached');
+            else          card3.classList.remove('is-reached');
+          }
+          if (marker3) {
+            if (reached3) marker3.classList.add('is-reached');
+            else          marker3.classList.remove('is-reached');
+          }
+          if (markerMobile3) {
+            if (reached3) markerMobile3.classList.add('is-reached');
+            else          markerMobile3.classList.remove('is-reached');
+          }
+
+          // Active glow border on card currently under the cyclist:
+          // Stop 1: within 4% of 0.18
+          // Stop 2: within 4% of 0.52
+          // Stop 3: within 4% of 0.86 or past it
+          var activeCard1 = Math.abs(dwelledProg - 0.18) <= 0.045;
+          var activeCard2 = Math.abs(dwelledProg - 0.52) <= 0.045;
+          var activeCard3 = (Math.abs(dwelledProg - 0.86) <= 0.045) || (dwelledProg >= 0.86);
+
+          if (card1) {
+            if (activeCard1) card1.classList.add('is-active');
+            else             card1.classList.remove('is-active');
+          }
+          if (card2) {
+            if (activeCard2) card2.classList.add('is-active');
+            else             card2.classList.remove('is-active');
+          }
+          if (card3) {
+            if (activeCard3) card3.classList.add('is-active');
+            else             card3.classList.remove('is-active');
+          }
+        }
+
+        // Keep loop running if lerping has not settled
+        if (Math.abs(targetProgress - smoothProgress) > 0.0005) {
+          requestAnimationFrame(renderLoop);
+        } else {
+          isTicking = false;
+        }
+      }
+
+      window.addEventListener('scroll', updateScrollTarget, { passive: true });
+      window.addEventListener('resize', updateScrollTarget, { passive: true });
+
+      // Run on page load
+      updateScrollTarget();
+
+      // Click on markers to smoothly scroll to that stop
+      function scrollToProgress(targetP) {
+        var rect = wrapper.getBoundingClientRect();
+        var scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+        var wrapperTop = rect.top + scrollY;
+        var maxScroll = wrapper.offsetHeight - window.innerHeight;
+        window.scrollTo({
+          top: wrapperTop + targetP * maxScroll,
+          behavior: 'smooth'
+        });
+      }
+
+      if (marker1) marker1.addEventListener('click', function () { scrollToProgress(0.18); });
+      if (marker2) marker2.addEventListener('click', function () { scrollToProgress(0.52); });
+      if (marker3) marker3.addEventListener('click', function () { scrollToProgress(0.86); });
+      if (markerMobile1) markerMobile1.addEventListener('click', function () { scrollToProgress(0.18); });
+      if (markerMobile2) markerMobile2.addEventListener('click', function () { scrollToProgress(0.52); });
+      if (markerMobile3) markerMobile3.addEventListener('click', function () { scrollToProgress(0.86); });
+    }());
+  </script>
+
+  <!-- ================================================================
+       SECTION 4 SCRIPT: SELECTED PROJECTS (STACK-TO-ROW ENGINE)
+       - Pinned sticky container (300vh outer track)
+       - Progress formula: clamp((scrollY - wrapperTop + 0.5 * innerHeight) / (wrapperHeight - 0.5 * innerHeight), 0, 1)
+       - Phase A (0.00 - 0.15): Cards stacked in central pile (translate & alternating rotate)
+       - Phase B (0.12 - 0.57): ALL cards split horizontally into the row at the same time (easeOutCubic)
+       - Phase C (0.75 - 1.00): Fully pinned neat row
+       - Hover interaction (progress >= 0.6, i.e. once all cards are split): Card translates to center, scales 1.45, soft glow,
+         detected on stable slot hit-box without flicker, other cards dim to 0.45 blur 2px.
+       - Mobile deck fanning & tap-to-enlarge (< 768px)
+       - Reduced motion fallback
+       ================================================================ -->
+  <script>
+    (function () {
+      'use strict';
+
+      // Accessibility: Skip animations if user prefers reduced motion
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        return;
+      }
+
+      var wrapper = document.getElementById('projects');
+      var projRow = document.getElementById('projRow');
+      var scrollHint = document.getElementById('projScrollHint');
+      if (!wrapper || !projRow) return;
+
+      var slots = Array.prototype.slice.call(projRow.querySelectorAll('.proj-slot'));
+      var numCards = slots.length;
+      if (numCards === 0) return;
+
+      // ================================================================
+      // STACK OFFSETS: Initial pile positions for Phase A (progress 0 - 0.15)
+      // Card 1 (index 0) sits on top, layers offset 8px per layer with alternating tilt
+      // ================================================================
+      var desktopStackOffsets = [
+        { x:  0, y:  0, rot: -1.5 },
+        { x:  8, y:  8, rot:  3.5 },
+        { x: -6, y: 16, rot: -4.0 },
+        { x: 10, y: 24, rot:  2.5 },
+        { x: -8, y: 32, rot: -3.0 }
+      ];
+
+      var mobileStackOffsets = [
+        { x:  0, y:  0, rot: -1.5 },
+        { x:  4, y:  4, rot:  2.5 },
+        { x: -4, y:  8, rot: -3.0 },
+        { x:  6, y: 12, rot:  2.0 },
+        { x: -6, y: 16, rot: -2.5 }
+      ];
+
+      var mobileFannedOffsets = [
+        { x: 0, y: -76, rot: -4.0 },
+        { x: 0, y: -38, rot:  2.0 },
+        { x: 0, y:   0, rot: -0.5 },
+        { x: 0, y:  38, rot: -2.5 },
+        { x: 0, y:  76, rot:  3.5 }
+      ];
+
+      function clamp(val, min, max) {
+        return Math.max(min, Math.min(max, val));
+      }
+
+      var isTicking = false;
+      var currentProgress = 0;
+      var activeHoverIndex = -1;
+      var activeMobileIndex = -1;
+
+      // ================================================================
+      // HOVER / FOCUS INTERACTIONS (ACTIVE ONLY WHEN PROGRESS >= 0.6, i.e. cards fully split)
+      // Stable hit-box on slot area prevents flicker when card expands
+      // ================================================================
+      function activateCard(idx) {
+        var isMobile = window.innerWidth <= 768;
+        if (isMobile) return;
+        if (currentProgress < 0.6) return;
+
+        activeHoverIndex = idx;
+        projRow.classList.add('has-hovered-child');
+
+        // Centre of the pinned screen (below the nav bar) = where the hovered card goes
+        var stage = projRow.parentElement.getBoundingClientRect();
+        var targetX = stage.left + stage.width / 2;
+        var targetY = stage.top + stage.height / 2 + 24;
+
+        slots.forEach(function (slot, i) {
+          var inner = slot.querySelector('.proj-card-inner');
+          if (i === idx) {
+            slot.classList.add('is-hovered');
+            if (inner) {
+              // The hovered card grows to fit ALL its content (CSS .is-hovered), so measure it now,
+              // then centre it on the screen and scale it up as far as it still fits.
+              var H = inner.offsetHeight, W = inner.offsetWidth;
+              var navH = 56;
+              var availH = stage.height - navH - 28;
+              var sc = Math.max(1, Math.min(1.4, availH / H));
+              var sr = slot.getBoundingClientRect();
+              var dx = targetX - (sr.left + W / 2);
+              var dy = (stage.top + navH + (stage.height - navH) / 2) - (sr.top + H / 2);
+              inner.style.transform = 'translate3d(' + dx.toFixed(2) + 'px, ' + dy.toFixed(2) + 'px, 0) scale(' + sc.toFixed(3) + ')';
+            }
+            slot.style.zIndex = '120';
+          } else {
+            slot.classList.remove('is-hovered');
+            if (inner) {
+              inner.style.transform = '';
+            }
+            slot.style.zIndex = (i + 1).toString();
+          }
+        });
+      }
+
+      function deactivateCard(idx) {
+        var isMobile = window.innerWidth <= 768;
+        if (isMobile) return;
+
+        if (activeHoverIndex === idx) {
+          activeHoverIndex = -1;
+          projRow.classList.remove('has-hovered-child');
+
+          slots.forEach(function (slot, i) {
+            slot.classList.remove('is-hovered');
+            var inner = slot.querySelector('.proj-card-inner');
+            if (inner) {
+              // Reset transform so CSS eases card smoothly back (0.5s cubic-bezier(0.22, 1, 0.36, 1))
+              inner.style.transform = '';
+            }
+            slot.style.zIndex = (numCards - i).toString();
+          });
+        }
+      }
+
+      // Attach hover and keyboard focus events to each slot hit-box
+      slots.forEach(function (slot, idx) {
+        slot.addEventListener('mouseenter', function () {
+          activateCard(idx);
+        });
+
+        slot.addEventListener('mouseleave', function () {
+          deactivateCard(idx);
+        });
+
+        slot.addEventListener('focus', function () {
+          activateCard(idx);
+        });
+
+        slot.addEventListener('blur', function () {
+          deactivateCard(idx);
+        });
+
+        // Mobile tap interaction (< 768px)
+        slot.addEventListener('click', function (e) {
+          var isMobile = window.innerWidth <= 768;
+          if (!isMobile) return;
+
+          // If clicking link inside active card, allow navigation
+          if (activeMobileIndex === idx && e.target.closest('.proj-card-footer')) {
+            return;
+          }
+
+          e.preventDefault();
+
+          if (activeMobileIndex === idx) {
+            // Tapping again returns it
+            slot.classList.remove('is-mobile-active');
+            activeMobileIndex = -1;
+            projRow.classList.remove('has-hovered-child');
+          } else {
+            // Bring tapped card to center and enlarge (scale 1.1)
+            slots.forEach(function (s) { s.classList.remove('is-mobile-active'); });
+            slot.classList.add('is-mobile-active');
+            activeMobileIndex = idx;
+            projRow.classList.add('has-hovered-child');
+          }
+        });
+      });
+
+      // Tap outside mobile card to return
+      document.addEventListener('click', function (e) {
+        var isMobile = window.innerWidth <= 768;
+        if (!isMobile || activeMobileIndex === -1) return;
+        if (!e.target.closest('.proj-slot')) {
+          slots.forEach(function (s) { s.classList.remove('is-mobile-active'); });
+          activeMobileIndex = -1;
+          projRow.classList.remove('has-hovered-child');
+        }
+      });
+
+      // ================================================================
+      // SCROLL ENGINE: PROGRESS CALCULATION & STAGGERED SPLIT
+      // ================================================================
+      function updateScroll() {
+        var isMobile = window.innerWidth <= 768;
+        var rect = wrapper.getBoundingClientRect();
+        var scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+        var wrapperTop = rect.top + scrollY;
+        var wrapperHeight = wrapper.offsetHeight;
+        var innerHeight = window.innerHeight;
+
+        // Progress formula specified in requirements:
+        // progress = clamp((scrollY - wrapperTop + 0.5 * innerHeight) / (wrapperHeight - 0.5 * innerHeight), 0, 1)
+        var denominator = wrapperHeight - 0.5 * innerHeight;
+        var numerator = scrollY - wrapperTop + 0.5 * innerHeight;
+        var progress = (denominator > 0) ? clamp(numerator / denominator, 0, 1) : 0;
+        currentProgress = progress;
+
+        // Toggle scroll hint
+        if (scrollHint) {
+          if (progress > 0.05) scrollHint.classList.add('is-hidden');
+          else                 scrollHint.classList.remove('is-hidden');
+        }
+
+        // Enable hover only once the cards are fully split (they finish at progress 0.57)
+        if (progress >= 0.6 && !isMobile) {
+          projRow.classList.add('can-hover');
+        } else {
+          projRow.classList.remove('can-hover');
+          if (activeHoverIndex !== -1 && !isMobile) {
+            deactivateCard(activeHoverIndex);
+          }
+        }
+
+        var rowWidth = projRow.offsetWidth;
+        var rowHeight = projRow.offsetHeight;
+
+        slots.forEach(function (slot, i) {
+          var scrollWrap = slot.querySelector('.proj-card-scroll-wrap');
+          if (!scrollWrap) return;
+
+          // ============================================================
+          // ALL cards use the same local progress, so they split at the same time:
+          //   clamp((progress - 0.12) / 0.45, 0, 1), eased with easeOutCubic
+          // CHANGE: 0.12 = when the split starts, 0.45 = how long it takes
+          // ============================================================
+          var localProgress = clamp((progress - 0.12) / 0.45, 0, 1);
+          var eased = 1 - Math.pow(1 - localProgress, 3); // easeOutCubic
+
+          if (!isMobile) {
+            // DESKTOP: Interpolate from central stack pile to row slot
+            var slotCenter = slot.offsetLeft + slot.offsetWidth / 2;
+            var dxToCenter = (rowWidth / 2) - slotCenter;
+            var dyToCenter = (rowHeight / 2) - (slot.offsetTop + slot.offsetHeight / 2);
+
+            var stackOffset = desktopStackOffsets[i] || { x: 0, y: 0, rot: 0 };
+            var curX = (dxToCenter + stackOffset.x) * (1 - eased);
+            var curY = (dyToCenter + stackOffset.y) * (1 - eased);
+            var curRot = stackOffset.rot * (1 - eased);
+
+            scrollWrap.style.transform =
+              'translate3d(' + curX.toFixed(2) + 'px, ' + curY.toFixed(2) + 'px, 0) rotate(' + curRot.toFixed(2) + 'deg)';
+
+            // z-index: Card 1 on top when stacked, then normal row ordering
+            if (activeHoverIndex === -1) {
+              slot.style.zIndex = (numCards - i).toString();
+            }
+          } else {
+            // MOBILE: Spread out from center stack into fanned deck
+            var startOff = mobileStackOffsets[i] || { x: 0, y: 0, rot: 0 };
+            var endOff   = mobileFannedOffsets[i] || { x: 0, y: 0, rot: 0 };
+
+            var curX = startOff.x + (endOff.x - startOff.x) * eased;
+            var curY = startOff.y + (endOff.y - startOff.y) * eased;
+            var curRot = startOff.rot + (endOff.rot - startOff.rot) * eased;
+
+            scrollWrap.style.transform =
+              'translate3d(' + curX.toFixed(2) + 'px, ' + curY.toFixed(2) + 'px, 0) rotate(' + curRot.toFixed(2) + 'deg)';
+
+            if (activeMobileIndex === -1) {
+              slot.style.zIndex = (numCards - i).toString();
+            }
+          }
+        });
+
+        isTicking = false;
+      }
+
+      function onScroll() {
+        if (!isTicking) {
+          isTicking = true;
+          requestAnimationFrame(updateScroll);
+        }
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+
+      // Initialize on DOM load
+      updateScroll();
+    }());
+  </script>
+
+  <!-- ================================================================
+       SECTION 5 SCRIPT: LET'S CONNECT & FOOTER ENGINE
+       - IntersectionObserver entrance animation (staggered reveal)
+       - Live character counter (max 500)
+       - Honeypot bot protection
+       - Inline field validation (no alert)
+       - AJAX submission with fetch()
+       - Graceful fallback with prefilled mailto: when offline or using placeholder endpoint
+       - Dynamic copyright year & smooth back-to-top button
+       ================================================================ -->
+  <script>
+    (function () {
+      'use strict';
+
+      // ================================================================
+      // CONFIGURATION: FORM ENDPOINT
+      // CHANGE: Replace this FORM_ENDPOINT with your personal endpoint URL:
+      // Formspree:  "https://formspree.io/f/YOUR_FORM_ID"
+      // FormSubmit: "https://formsubmit.co/ajax/bincymanuel085@gmail.com"
+      //
+      // Free endpoint setup:
+      // 1. Go to formspree.io or formsubmit.co
+      // 2. Sign up with: bincymanuel085@gmail.com
+      // 3. Paste the generated form ID or endpoint URL here.
+      // (If left as placeholder, the form automatically offers a prefilled mailto: link!)
+      // ================================================================
+      var FORM_ENDPOINT = "https://formspree.io/f/xoeejoar";
+
+      // 1. Entrance Animation via IntersectionObserver
+      var contactSection = document.getElementById('contact');
+      if (contactSection) {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          contactSection.classList.add('is-in-view');
+        } else if ('IntersectionObserver' in window) {
+          var observer = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+              if (entry.isIntersecting) {
+                contactSection.classList.add('is-in-view');
+                observer.unobserve(contactSection);
+              }
+            });
+          }, { threshold: 0.15 });
+          observer.observe(contactSection);
+        } else {
+          contactSection.classList.add('is-in-view');
+        }
+      }
+
+      // 2. Dynamic Year in Footer
+      var yearSpan = document.getElementById('currentYear');
+      if (yearSpan) {
+        yearSpan.textContent = new Date().getFullYear().toString();
+      }
+
+      // 3. Back to Top Button
+      var backToTopBtn = document.getElementById('backToTopBtn');
+      if (backToTopBtn) {
+        backToTopBtn.addEventListener('click', function () {
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+        });
+      }
+
+      // 4. Form Handling: Validation, Character Count & Submission
+      var form = document.getElementById('contactForm');
+      var nameInput = document.getElementById('contactName');
+      var emailInput = document.getElementById('contactEmail');
+      var subjectInput = document.getElementById('contactSubject');
+      var messageInput = document.getElementById('contactMessage');
+      var companyInput = document.getElementById('contactCompany');
+      var submitBtn = document.getElementById('contactSubmitBtn');
+      var charCounter = document.getElementById('messageCharCounter');
+      var successState = document.getElementById('formSuccessState');
+      var resetBtn = document.getElementById('formResetBtn');
+      var fallbackBanner = document.getElementById('formFallbackBanner');
+      var directMailtoBtn = document.getElementById('formDirectMailtoBtn');
+
+      var nameError = document.getElementById('nameError');
+      var emailError = document.getElementById('emailError');
+      var subjectError = document.getElementById('subjectError');
+      var messageError = document.getElementById('messageError');
+
+      if (!form) return;
+
+      // Live character counter
+      if (messageInput && charCounter) {
+        messageInput.addEventListener('input', function () {
+          var len = messageInput.value.length;
+          charCounter.textContent = len + ' / 500';
+          if (len >= 500) {
+            charCounter.style.color = '#ef4444';
+          } else {
+            charCounter.style.color = '#888888';
+          }
+        });
+      }
+
+      // Clear inline errors on input
+      function setupClearError(input, errorEl) {
+        if (!input || !errorEl) return;
+        input.addEventListener('input', function () {
+          input.classList.remove('is-invalid');
+          errorEl.classList.remove('is-visible');
+          if (fallbackBanner) fallbackBanner.style.display = 'none';
+        });
+      }
+      setupClearError(nameInput, nameError);
+      setupClearError(emailInput, emailError);
+      setupClearError(subjectInput, subjectError);
+      setupClearError(messageInput, messageError);
+
+      function showError(input, errorEl, msg) {
+        if (input) input.classList.add('is-invalid');
+        if (errorEl) {
+          if (msg) errorEl.textContent = msg;
+          errorEl.classList.add('is-visible');
+        }
+      }
+
+      function isValidEmail(val) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+      }
+
+      function setButtonState(sending) {
+        if (!submitBtn) return;
+        var btnText = submitBtn.querySelector('.submit-btn-text');
+        var btnIcon = submitBtn.querySelector('.submit-btn-icon');
+        if (sending) {
+          submitBtn.disabled = true;
+          submitBtn.classList.add('is-sending');
+          if (btnText) btnText.textContent = 'Sending...';
+          if (btnIcon) btnIcon.style.display = 'none';
+        } else {
+          submitBtn.disabled = false;
+          submitBtn.classList.remove('is-sending');
+          if (btnText) btnText.textContent = 'Send Message';
+          if (btnIcon) btnIcon.style.display = 'inline-block';
+        }
+      }
+
+      function updateFallbackMailto(name, email, subject, message) {
+        if (!directMailtoBtn) return;
+        var recipient = "bincymanuel085@gmail.com";
+        var mailtoSubject = subject ? subject : "Portfolio Message from " + (name || "Visitor");
+        var mailtoBody = "Hi Bincy,\n\n" + (message || "") + "\n\nFrom: " + (name || "") + " (" + (email || "") + ")";
+        directMailtoBtn.href = "mailto:" + recipient + "?subject=" + encodeURIComponent(mailtoSubject) + "&body=" + encodeURIComponent(mailtoBody);
+      }
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        // 1. Honeypot Bot check: If the hidden 'company' field is filled, silently ignore
+        if (companyInput && companyInput.value.trim() !== '') {
+          return;
+        }
+
+        // 2. Validate fields
+        var isValid = true;
+        var firstInvalidInput = null;
+
+        var nameVal = nameInput ? nameInput.value.trim() : '';
+        var emailVal = emailInput ? emailInput.value.trim() : '';
+        var subjectVal = subjectInput ? subjectInput.value.trim() : '';
+        var messageVal = messageInput ? messageInput.value.trim() : '';
+
+        if (!nameVal) {
+          showError(nameInput, nameError, 'Please enter your name');
+          if (!firstInvalidInput) firstInvalidInput = nameInput;
+          isValid = false;
+        }
+
+        if (!emailVal) {
+          showError(emailInput, emailError, 'Please enter your email');
+          if (!firstInvalidInput) firstInvalidInput = emailInput;
+          isValid = false;
+        } else if (!isValidEmail(emailVal)) {
+          showError(emailInput, emailError, 'Please enter a valid email address');
+          if (!firstInvalidInput) firstInvalidInput = emailInput;
+          isValid = false;
+        }
+
+        if (!subjectVal) {
+          showError(subjectInput, subjectError, 'Please enter a subject');
+          if (!firstInvalidInput) firstInvalidInput = subjectInput;
+          isValid = false;
+        }
+
+        if (!messageVal) {
+          showError(messageInput, messageError, 'Please enter your message');
+          if (!firstInvalidInput) firstInvalidInput = messageInput;
+          isValid = false;
+        }
+
+        if (!isValid) {
+          if (firstInvalidInput) firstInvalidInput.focus();
+          return;
+        }
+
+        // Hide any previous fallback banner
+        if (fallbackBanner) fallbackBanner.style.display = 'none';
+
+        // 3. Prepare data & sending state
+        setButtonState(true);
+
+        // Check if user is still using the placeholder endpoint
+        var isPlaceholder = !FORM_ENDPOINT || FORM_ENDPOINT.indexOf('YOUR_FORM_ID') !== -1;
+
+        if (isPlaceholder) {
+          // Graceful fallback when endpoint is not configured yet
+          setTimeout(function () {
+            setButtonState(false);
+            updateFallbackMailto(nameVal, emailVal, subjectVal, messageVal);
+            if (fallbackBanner) {
+              fallbackBanner.style.display = 'block';
+              fallbackBanner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+          }, 600);
+          return;
+        }
+
+        // 4. Send via fetch()
+        var formData = new FormData(form);
+
+        fetch(FORM_ENDPOINT, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Accept': 'application/json'
+          }
+        })
+        .then(function (response) {
+          setButtonState(false);
+          if (response.ok) {
+            // Show animated success state
+            form.style.display = 'none';
+            if (successState) {
+              successState.style.display = 'flex';
+            }
+          } else {
+            // Server error response: show fallback banner
+            updateFallbackMailto(nameVal, emailVal, subjectVal, messageVal);
+            if (fallbackBanner) {
+              fallbackBanner.style.display = 'block';
+            }
+          }
+        })
+        .catch(function () {
+          // Network failure: show fallback banner with mailto:
+          setButtonState(false);
+          updateFallbackMailto(nameVal, emailVal, subjectVal, messageVal);
+          if (fallbackBanner) {
+            fallbackBanner.style.display = 'block';
+          }
+        });
+      });
+
+      // 5. "Send another message" reset handler
+      if (resetBtn) {
+        resetBtn.addEventListener('click', function () {
+          form.reset();
+          if (charCounter) charCounter.textContent = '0 / 500';
+          if (successState) successState.style.display = 'none';
+          if (fallbackBanner) fallbackBanner.style.display = 'none';
+          form.style.display = 'flex';
+          setButtonState(false);
+          if (nameInput) nameInput.focus();
+        });
+      }
+    }());
+  </script>
+
+  <!-- ================================================================
+       NAV SCRIPT: smooth scroll to sections, active-link highlight, mobile menu
+       About / Experience / Projects are tall "pinned" wrappers, so a plain #anchor
+       would land in the wrong place. Each target is computed from the wrapper's
+       real top position, so the section is already showing its first state on arrival.
+       CHANGE: OFFSETS adds a few extra pixels of scroll for a section if you want it to land later.
+       ================================================================ -->
+  <script>
+    (function () {
+      'use strict';
+
+      var nav = document.getElementById('siteNav');
+      var toggle = document.getElementById('siteNavToggle');
+      var links = Array.prototype.slice.call(nav.querySelectorAll('[data-target]'));
+      var SECTION_IDS = ['about', 'experience', 'projects', 'contact'];
+      var OFFSETS = { about: 2, experience: 2, projects: 2, contact: 0 };
+
+      function topOf(id) {
+        var el = document.getElementById(id);
+        return el ? el.getBoundingClientRect().top + (window.pageYOffset || 0) : 0;
+      }
+
+      function scrollToSection(id) {
+        var top = (id === 'top') ? 0 : topOf(id) + (OFFSETS[id] || 0);
+        window.scrollTo({ top: top, behavior: 'smooth' });
+      }
+
+      function closeMenu() {
+        nav.classList.remove('is-open');
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.setAttribute('aria-label', 'Open menu');
+      }
+
+      links.forEach(function (link) {
+        link.addEventListener('click', function (e) {
+          e.preventDefault();
+          scrollToSection(link.getAttribute('data-target'));
+          closeMenu();
+        });
+        link.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); link.click(); }
+        });
+      });
+
+      toggle.addEventListener('click', function () {
+        var open = nav.classList.toggle('is-open');
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeMenu(); });
+      window.addEventListener('resize', function () { if (window.innerWidth >= 768) closeMenu(); }, { passive: true });
+
+      // Scroll-spy: uses the scroll position (not IntersectionObserver) because the sections are pinned
+      var ticking = false;
+      function spy() {
+        var y = (window.pageYOffset || 0) + window.innerHeight * 0.35;
+        var active = null;
+        SECTION_IDS.forEach(function (id) { if (topOf(id) <= y) active = id; });
+        links.forEach(function (link) {
+          var on = link.getAttribute('data-target') === active;
+          link.classList.toggle('is-active', on);
+          if (on) link.setAttribute('aria-current', 'true'); else link.removeAttribute('aria-current');
+        });
+        ticking = false;
+      }
+      window.addEventListener('scroll', function () {
+        if (!ticking) { ticking = true; requestAnimationFrame(spy); }
+      }, { passive: true });
+      window.addEventListener('resize', spy, { passive: true });
+      spy();
+    }());
+  </script>
+
+  <!-- ================================================================
+       LINK SCRIPT: hides the browser's URL preview (bottom-left) when hovering links.
+       Every external link keeps working; its address is stored in data-href and opened on click.
+       Also sets --sp (0..1 page scroll progress) used by the drifting background glow.
+       ================================================================ -->
+  <script>
+    (function () {
+      'use strict';
+      var sel = 'a[href^="http"], a[href^="mailto:"], a[href^="sms:"], a[href^="tel:"], a[href="resume.pdf"]';
+      Array.prototype.forEach.call(document.querySelectorAll(sel), function (a) {
+        if (a.closest('#formFallbackBanner') || a.id === 'formDirectMailtoBtn') return;   // filled in by the form script
+        a.setAttribute('data-href', a.getAttribute('href'));
+        if (a.hasAttribute('download')) a.setAttribute('data-download', '');
+        a.removeAttribute('href');
+        a.setAttribute('role', 'link');
+        if (!a.hasAttribute('tabindex')) a.setAttribute('tabindex', '0');
+      });
+
+      function go(a) {
+        var url = a.getAttribute('data-href');
+        if (a.hasAttribute('data-download')) {
+          var t = document.createElement('a'); t.href = url; t.download = ''; document.body.appendChild(t); t.click(); t.remove();
+        } else if (/^https?:/.test(url)) {
+          window.open(url, '_blank', 'noopener,noreferrer');
+        } else {
+          window.location.href = url;     // mailto: / sms: / tel:
+        }
+      }
+      // Bubble phase on document, so card handlers that call preventDefault() (mobile tap-to-zoom) still win
+      document.addEventListener('click', function (e) {
+        var a = e.target.closest && e.target.closest('[data-href]');
+        if (!a || e.defaultPrevented) return;
+        e.preventDefault(); go(a);
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key !== 'Enter') return;
+        var a = e.target.closest && e.target.closest('[data-href]');
+        if (a && e.target === a) { e.preventDefault(); go(a); }
+      });
+
+      var root = document.documentElement, tick = false;
+      function prog() {
+        tick = false;
+        var max = Math.max(1, root.scrollHeight - window.innerHeight);
+        root.style.setProperty('--sp', Math.min(1, Math.max(0, (window.pageYOffset || 0) / max)).toFixed(4));
+      }
+      window.addEventListener('scroll', function () { if (!tick) { tick = true; requestAnimationFrame(prog); } }, { passive: true });
+      window.addEventListener('resize', prog, { passive: true });
+      prog();
+    }());
+  </script>
+</body>
+</html>
